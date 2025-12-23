@@ -1,22 +1,72 @@
-The dataset.txt file contains the data that come from the sensor of a real robot.
-In particular in the first lines there are information about the kinematic model of the robot (traction_drive_wheel aka front-tractor tricycle), the kinematic parameters to be estimate, an intial guess of those, the encoder order of the field ticks and their max ranges. These two last information are important to interpret encoder ticks's data.
+# Calibration of a (real) Robot
 
-A record of the dataset is compose by:
-	-time: 	       the time stamp
-	-ticks:        the reading of the encoders. The first is the steering one which is an absolute encoder, 
-			       the second is of the traction and it is a incremental one.
-	-model pose:   it is the odometry of our model. An important thing to clarify is that our model does not correspond to the one you have seen in AMR.
-				   You are free to formulate the kinematic model as you wish. For your task you can ignore this information.
-	-tracker pose: it is the position of the sensor coming from an odometry system for this sensor.
-	
-Tips on the encoder data: consider that the reading is stored in an uint32 variable, so in some cases it can happen that the variable overflow. Avoid this cases and consider only the incremental information about the encoder to do the integration of your model.
+## Task Overview
 
-The output of the system has to be:
-- 2D position of the sensor w.r.t. the base link
-- The kinematic parameters: 
-	ksteer: how many radians correspond to one tick
-	ktraction: how many meter correspond to one tick
-	steer_offset: at which angle correspond the zero of the wheel
-	base_line: the lenght of the base_line (remember that the kinematic center is in the middle of the axis of the rear wheels)
+The dataset contains data collected from the sensors of a **real mobile robot**. Namely, a **front-tractor tricycle**.
+
+The **output** should be:
+
+### 1. Sensor Position
+- **2D position of the sensor** with respect to the **base link**
+
+### 2. Kinematic Parameters
+- **`ksteer`**: radians per tick (of the steering encoder)
+- **`ktraction`**: meters per tick (of the traction encoder)
+- **`steer_offset`**: steering angle corresponding to zero wheel position
+- **`base_line`**: length of the baseline. **Remember that the kinematic center is in the middle of the axis of the rear wheels**
+
+
+---
+
+## Dataset File
+
+### `dataset.txt`
+The first 10 lines contain:
+
+- **Kinematic model**: traction_drive_wheel (front-tractor tricycle)
+- **Kinematic parameters to be estimated**
+- **Initial guesses** for the parameters
+- **Encoder order** 
+- **Encoder maximum ranges**
+- **Laser w.r.t. base link transform** 
+> [!IMPORTANT]
+> The encoder order and ranges are critical for correctly interpreting the encoder tick data.
+
+---
+
+## Data Record Structure
+Each record in the dataset is composed of the following fields:
+
+### 1. Time
+- **`time`**: Timestamp of the measurement
+
+### 2. Encoder Ticks
+- **`ticks`**: Encoder readings
+  - **Steering encoder**: absolute encoder
+  - **Traction encoder**: incremental encoder
+
+### 3. Model Pose
+- **`model pose`**: Odometry computed using the kinematic model
+
+> [!NOTE]
+> This model **does not correspond** to the one used in AMR.
+> You are free to define and use your own kinematic model for this task. Hence, this field can safely be ignored if not needed.
+
+### 4. Tracker Pose
+- **`tracker pose`**: Position of the sensor obtained from an external odometry/tracking system
+
+---
+
+## Encoder Data Notes
+
+> [!WARNING]
+> Encoder readings are stored as **`uint32`** values, so **overflow may occur** in some cases.
+
+> [!TIP]
+> Detect and avoid overflow cases.
+> Use **incremental differences** between encoder readings when integrating the kinematic model.
+An incremental difference is the difference between the next reading and the previous one.
+
+---
 
 
