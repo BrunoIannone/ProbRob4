@@ -4,18 +4,30 @@ clc
 
 #import 2d geometry utils
 source "./tools/utilities/geometry_helpers_2d.m"
-
 #addpath "./exercise/"
-
-h = figure(1);
+pkg load quaternion
+%h = figure(1);
 
 more off;
 #load the calibration matrix
-disp('loading the matrix');
+disp('Loading data matrix');
 Z=load("./data/dataset_octave.txt");
 #compute the ground truth trajectory
-plot(Z(:,7),Z(:,8),'r-', 'linewidth', 2)
-hold on;
+% plot(Z(:,7),Z(:,8),'r-', 'linewidth', 2)
+% hold on;
+
+disp('Loading data');
+
+nominal_params = [0.1 0.0106141 1.4 0] 
+
+encoder_max_values = [8192 5000]
+
+%rot = quaternion(config(4,1:4)')
+r_T_l = [[1,0,0,1.5];
+         [0,1,0, 0 ];
+         [0,0,1, 0 ];
+         [0,0,0, 1 ]]
+
 % TrueTrajectory=compute_odometry_trajectory(Z(:,4:6));
 % disp('ground truth');
 %  hold on;
@@ -44,4 +56,4 @@ hold on;
 % hold on;
 % plot(CalTrajectory(:,1),CalTrajectory(:,2), 'b-', 'linewidth', 2);
 
-waitfor(h);
+%waitfor(h);

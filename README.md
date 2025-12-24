@@ -69,4 +69,8 @@ An incremental difference is the difference between the next reading and the pre
 
 ---
 
+## Workflow
+- Adapted the given dataset to work with Octave using python (DatasetHandler)
+python --path "dataset.txt path" --header_lenght int --dest "save_dest"
 
+- Put known stuff in some variables
