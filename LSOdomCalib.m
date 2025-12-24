@@ -12,7 +12,7 @@ h = figure(1);
 more off;
 #load the calibration matrix
 disp('loading the matrix');
-Z=load("./dataset_octave.txt");
+Z=load("./data/dataset_octave.txt");
 #compute the ground truth trajectory
 plot(Z(:,7),Z(:,8),'r-', 'linewidth', 2)
 hold on;
