@@ -4,13 +4,21 @@ import matplotlib.pyplot as plt
 import json
 import time
 class DatasetHandler():
-    
+	"""Utility class for handling the dataset
+	"""
 	def __init__(self,path,header_length=10):
+		"""DatasetHandler init class
+
+		Args:
+			path (str): dataset.txt path
+			header_length (int, optional): Number of header lines to skip. Defaults to 10.
+		"""
 		self.path = path
 		self.header_length = header_length
     
 	def view_traj(self):
-
+		"""Plot trajectory
+		"""
 		f = open(self.path)
 
 		lines = f.read().splitlines()
@@ -28,18 +36,22 @@ class DatasetHandler():
 			x.append(float(xy[0]))
 			y.append(float(xy[1]))
 
-		x_np = np.asarray(x)
-		y_np = np.asarray(y)
+		# x_np = np.asarray(x)
+		# y_np = np.asarray(y)
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
 		ax.scatter(x, y)
 		ax.axis("equal")
 		plt.show()
 
-	def convertToOctave(self):
-		dict = {}
+	def convertToOctave(self,dest):
+		"""Convert dataset.txt to a matrix for octave usage
+
+		Args:
+			dest (str): .txt savepath
+		"""
 		f = open(self.path)
-		f_w = open("/home/bruno/Desktop/ProbRob4/dataset_octave.txt","w")
+		f_w = open(dest+"dataset_octave.txt","w")
 
 		lines = f.read().splitlines()
 
