@@ -19,21 +19,29 @@ nominal_params = [0.1 0.0106141 1.4 0];
 encoder_max_values = [8192 5000];
 
 %rot = quaternion(config(4,1:4)')
-r_T_l = [[1,0,0,1.5];
-         [0,1,0, 0 ];
-         [0,0,1, 0 ];
-         [0,0,0, 1 ]];
+r_T_l = [[1,0,1.5];
+         [0,1, 0 ];
+         [0,0, 1 ];
+         ];
 #compute the ground truth trajectory
 
-disp("Display Sensor in laser ground truth")
-
-plot(Z(:,4),Z(:,5),'b-', 'linewidth', 2)
-hold on;
-
 disp("Display robot odometry")
-plot(Z(:,7),Z(:,8),'r-', 'linewidth', 2)
+
+h1 = plot(Z(:,4),Z(:,5),'b-', 'linewidth', 2);
+hold on;
+
+disp("Display sensor GT")
+h2 = plot(Z(:,7),Z(:,8),'r-', 'linewidth',2);
 
 hold on;
+
+disp("Display sensor odometry")
+SensorTrajectory=compute_sensor_odometry(Z(:,4:6),[1.5,0,0]);
+h3 = plot(SensorTrajectory(:,1),SensorTrajectory(:,2),'y-', 'linewidth', 2);
+
+hold on;
+
+legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
 pause(1)
 
 
@@ -59,7 +67,7 @@ pause(1)
 % pause(1);
 
 % disp('computing calibrated odometry');
-% #COdom=apply_odometry_correction(X,odom);
+% #COdosm=apply_odometry_correction(X,odom);
 % COdom = stack_odometry(X,Z(:,1:2));
 
 % CalTrajectory=compute_odometry_trajectory(COdom);
