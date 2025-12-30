@@ -6,7 +6,10 @@ clc
 source "./tools/utilities/geometry_helpers_2d.m"
 #addpath "./exercise/"
 pkg load quaternion
-h = figure(1);
+plot_ = true;
+if(plot_)
+    h = figure(1);
+endif
 
 more off;
 #load the calibration matrix
@@ -32,42 +35,33 @@ r_T_l = [[1,0,1.5];
          [0,0, 1 ];
          ];
 #compute the ground truth trajectory
+if(plot_)
+    disp("Display robot odometry")
 
-disp("Display robot odometry")
+    h1 = plot(robot_odometry_values(:,1),robot_odometry_values(:,2),'b-', 'linewidth', 2);
+    hold on;
 
-h1 = plot(robot_odometry_values(:,1),robot_odometry_values(:,2),'b-', 'linewidth', 2);
-hold on;
+    disp("Display sensor GT")
+    h2 = plot(sensor_gt_values(:,1),sensor_gt_values(:,2),'r-', 'linewidth',2);
 
-disp("Display sensor GT")
-h2 = plot(sensor_gt_values(:,1),sensor_gt_values(:,2),'r-', 'linewidth',2);
+    hold on;
 
-hold on;
+    disp("Display sensor odometry")
+    h3 = plot(sensor_odometry_values(:,1),sensor_odometry_values(:,2),'y-', 'linewidth', 2);
 
-disp("Display sensor odometry")
-h3 = plot(sensor_odometry_values(:,1),sensor_odometry_values(:,2),'y-', 'linewidth', 2);
+    hold on;
 
-hold on;
+    legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
+    pause(1)
+endif
 
-legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
-pause(1)
-
-for (i=1:size(incremental_values,1)),
-    if (i == 1),
-        disp("inizio")
-        pause(2)
-        continue
-    endif
-    if((i+1)> size(incremental_values,1)),
-        disp("fine")
-        pause(2)
-        break
-    endif    
-    incremental_values(i)
-    incremental_values(i+1)
-    mod(incremental_values(i+1) -  incremental_values(i),2^32)
-    disp("-----")
-endfor
+[absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
 nominal_params = [1.5,0];
+[absolute_values_rel, incremental_values_rel] = get_relative_ticks(absolute_values,incremental_values);
+attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values_rel,incremental_values_rel]));
+plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
+
+%incremental_values
 % odom = stack_odometry(nominal_params,Z(:,1:2));
 % #compute the uncalibrated odometry
 % OdomTrajectory=compute_odometry_trajectory(odom);
@@ -89,5 +83,6 @@ nominal_params = [1.5,0];
 % CalTrajectory=compute_odometry_trajectory(COdom);
 % hold on;
 % plot(CalTrajectory(:,1),CalTrajectory(:,2), 'b-', 'linewidth', 2);
-
-waitfor(h);
+if(plot_)
+    waitfor(h);
+endif
