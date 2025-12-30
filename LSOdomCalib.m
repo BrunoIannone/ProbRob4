@@ -56,9 +56,8 @@ if(plot_)
 endif
 
 [absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
-nominal_params = [1.5,0];
-[absolute_values_rel, incremental_values_rel] = get_relative_ticks(absolute_values,incremental_values);
-attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values_rel,incremental_values_rel]));
+%[absolute_values, incremental_values] = get_relative_ticks(absolute_values,incremental_values);
+attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values,incremental_values]));
 plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
 
 %incremental_values
