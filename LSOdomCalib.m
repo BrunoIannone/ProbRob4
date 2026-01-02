@@ -6,7 +6,7 @@ clc
 source "./tools/utilities/geometry_helpers_2d.m"
 #addpath "./exercise/"
 pkg load quaternion
-plot_ = true;
+plot_ = false;
 if(plot_)
     h = figure(1);
 endif
@@ -55,10 +55,11 @@ if(plot_)
     pause(1)
 endif
 
-[absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
-%[absolute_values, incremental_values] = get_relative_ticks(absolute_values,incremental_values);
-attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values,incremental_values]));
-plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
+%[absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
+ incremental_values= get_relative_ticks(incremental_values);
+%absolute_values(1:size(absolute_values,1)-1,:)
+%attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values,incremental_values]));
+%plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
 
 %incremental_values
 % odom = stack_odometry(nominal_params,Z(:,1:2));
