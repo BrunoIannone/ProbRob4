@@ -6,7 +6,7 @@ l = x(4);
 t_s = ticks(1); % absolute
 t_t = ticks(2); % incremental
 %t_t%
-phi = k_s*t_s;
+phi = wrapToPi(k_s*t_s);
 ds = k_t*t_t;
 if(ds == 0)
     delta = [0;0;0];
