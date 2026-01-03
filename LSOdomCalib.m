@@ -6,7 +6,8 @@ clc
 source "./tools/utilities/geometry_helpers_2d.m"
 #addpath "./exercise/"
 pkg load quaternion
-plot_ = false;
+pkg load mapping
+plot_ = true;
 if(plot_)
     h = figure(1);
 endif
@@ -51,15 +52,16 @@ if(plot_)
 
     hold on;
 
-    legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
+    %legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
     pause(1)
 endif
 
 %[absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
- incremental_values= get_relative_ticks(incremental_values);
+incremental_values_rel= get_relative_ticks(incremental_values);
 %absolute_values(1:size(absolute_values,1)-1,:)
-%attempt = compute_odometry_trajectory(stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values,incremental_values]));
-%plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
+attempt = stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values(1:size(absolute_values,1)-1,:),incremental_values_rel]);
+h4 = plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
+legend([h1 h2 h3 h4], {'Robot odometry', 'Sensor GT', 'Sensor odometry', "My gt"});
 
 %incremental_values
 % odom = stack_odometry(nominal_params,Z(:,1:2));
