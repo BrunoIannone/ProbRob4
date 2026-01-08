@@ -15,7 +15,7 @@ else
     
     dth = (sin(phi)/l)*ds;
     %dphi = k_s*(t_s - steering_offset);
-    dx = cos(theta+phi)*ds;
-    dy = sin(theta+phi)*ds;
+    dx = cos(theta)*cos(phi)*ds;
+    dy = sin(theta)*cos(phi)*ds;
     delta = [dx;dy;dth];
 end
