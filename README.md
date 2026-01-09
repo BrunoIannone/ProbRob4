@@ -74,3 +74,7 @@ An incremental difference is the difference between the next reading and the pre
 python --path "dataset.txt path" --header_lenght int --dest "save_dest"
 
 - Put known stuff in some variables
+
+- to run, enter "octave" in the shell, next: install pkg install -forge quaternion io matgeom geometry mapping
+
+in this order, to respect dependencies

@@ -1,11 +1,8 @@
-function [incremental]=get_relative_ticks(incremental_values)
-    max_value = 2^32;
-    threshold  = (max_value*80)/100  # 4080218931
-    disp("sjsjs")
-    disp(threshold>max_value/2)
+function [incremental]=get_relative_ticks(incremental_values,max_value)
+    threshold  = (max_value*80)/100;  # 4080218931
+
     overflow_incoming = false;
 
-    %absolute = zeros(size(absolute_values,1)-1,1);
     incremental = zeros(size(incremental_values,1)-1,1);
     
     for (i = 1:size(incremental_values,1))

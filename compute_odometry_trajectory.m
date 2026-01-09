@@ -13,6 +13,8 @@ function T=compute_odometry_trajectory(U)
 		# HINT : current_T is the absoulute pose obtained by concatenating 
 		# all the relative transformation until the current timestamp i
 		current_T *= v2t(u); %TODO
-		T(i,1:3)=t2v(current_T)';
+		vector = t2v(current_T)
+		vector(3,1) = wrapToPi(vector(3,1))
+		T(i,1:3)=vector';
 	end
 end

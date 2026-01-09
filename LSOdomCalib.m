@@ -18,11 +18,12 @@ sensor_translation_wrt_robot = [1.5,0,0]
 
 disp('Loading data matrix');
 Z=load("./data/dataset_octave.txt");
-disp('Assing data');
+disp('Assign data');
 
 nominal_params = [0.1 0.0106141 1.4 0];
 
 encoder_max_values = [8192 5000];
+max_incremental_variable = 2^32;
 
 absolute_values = Z(:,2);
 incremental_values = Z(:,3);
@@ -51,17 +52,19 @@ if(plot_)
     h3 = plot(sensor_odometry_values(:,1),sensor_odometry_values(:,2),'y-', 'linewidth', 2);
 
     hold on;
+    
+    incremental_values_rel= get_relative_ticks(incremental_values,max_incremental_variable);
+    
+    attempt = stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values(1:size(absolute_values,1)-1,:),incremental_values_rel], encoder_max_values);
+    disp("Display my robot odometry")
 
+    h4 = plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
+    legend([h1 h2 h3 h4], {'Robot odometry', 'Sensor GT', 'Sensor odometry', "My robot odometry"});
+    hold on;
     %legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
     pause(1)
 endif
 
-%[absolute_values, incremental_values] = refine_ticks(absolute_values,encoder_max_values(1),incremental_values,encoder_max_values(2));
-incremental_values_rel= get_relative_ticks(incremental_values);
-%absolute_values(1:size(absolute_values,1)-1,:)
-attempt = stack_odometry([ 0.1, 0.0106141, 0,1.4],[absolute_values(1:size(absolute_values,1)-1,:),incremental_values_rel]);
-h4 = plot(attempt(:,1),attempt(:,2), 'g-', 'linewidth', 2);
-legend([h1 h2 h3 h4], {'Robot odometry', 'Sensor GT', 'Sensor odometry', "My gt"});
 
 %incremental_values
 % odom = stack_odometry(nominal_params,Z(:,1:2));
