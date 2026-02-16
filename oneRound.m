@@ -4,7 +4,7 @@ function [x_new, chi_set] = oneRound(x, Z,odometry)
   chi_set = [];
   x_new  = x
 
-  for(j=1:100)
+  for(j=1:10)
     j
 
     H=zeros(7,7);
@@ -12,11 +12,12 @@ function [x_new, chi_set] = oneRound(x, Z,odometry)
     chi=0;
 
   for (i = 1:nmeas)
-    if(Z(i,2)==0)
-      continue
-    endif
     
-    [e,J]=errorAndJacobian(x_new, Z(i,:),odometry(i,:));
+    
+    [e,J,status]=errorAndJacobian(x_new, Z(i,:),odometry(i,:));
+    if(status == -1)
+    continue
+    endif
     H+=J'*J;
     b+=J'*e;
     chi+=e'*e;
