@@ -1,10 +1,10 @@
-function [x_new, chi_set] = oneRound(x, Z,odometry)
+function [x_new, chi_set] = oneRound(x, Z,odometry,n_iterations)
   
   nmeas=size(Z,1);
   chi_set = [];
   x_new  = x
-
-  for(j=1:10)
+  kernel_threshold = 100
+  for(j=1:n_iterations)
     j
 
     H=zeros(7,7);
@@ -15,12 +15,15 @@ function [x_new, chi_set] = oneRound(x, Z,odometry)
     
     
     [e,J,status]=errorAndJacobian(x_new, Z(i,:),odometry(i,:));
-    if(status == -1)
-    continue
+    chi+=e'*e;
+    if (chi>kernel_threshold)
+      e*=sqrt(kernel_threshold/chi);
+      chi=kernel_threshold;
     endif
+    H+=eye(7)*0.01;
     H+=J'*J;
     b+=J'*e;
-    chi+=e'*e;
+    
   endfor
 
   dx=-H\b;
