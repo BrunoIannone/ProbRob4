@@ -1,8 +1,12 @@
-function [e, J,status] = errorAndJacobian(x,z,current_pose)
-  global encoder_max_values
+function [e, J,current_pose,status] = errorAndJacobian(x,Z,encoder_max_values,current_pose)
+  
   status = 0;
-  ticks = z(1:2);
-  meas  = z(3:5);
+  
+  ticks = Z(1:2);
+  sensor_meas  = Z(3:5);
+  
+  %robot_odometry = Z(:,6:8)
+
   %current_pose(3) = wrapToPi(current_pose(3));
   delta_robot = h_odom(x, ticks, current_pose(3), encoder_max_values);
   % if(delta_robot==[0;0;0])
@@ -13,9 +17,11 @@ function [e, J,status] = errorAndJacobian(x,z,current_pose)
 
 
   pred = t2v(v2t(current_pose) * v2t(delta_robot)*v2t(x(5:7)))';
-  pred(3)=wrapToPi(pred(3));
+  %pred(3)=wrapToPi(pred(3));
   
-  e     = (pred-meas)';
+  current_pose_ = t2v(v2t(current_pose) * v2t(delta_robot))';
+  
+  e     = (pred-sensor_meas)';
   e(3) = wrapToPi(e(3));
   e;
   J     = zeros(3,7);
@@ -56,6 +62,6 @@ function [e, J,status] = errorAndJacobian(x,z,current_pose)
     J(:,i) = inv_eps2 * (diffe)';
     
   endfor;
-  
+  current_pose = current_pose_;
   
 endfunction

@@ -1,36 +1,43 @@
-function [x_new, chi_set] = oneRound(x, Z,odometry,n_iterations)
-  
-  nmeas=size(Z,1);
-  chi_set = [];
-  x_new  = x
-  kernel_threshold = 100
-  for(j=1:n_iterations)
-    j
+function [x_new, chi_record] = oneRound(x, Z, n_iterations,encoder_max_values)
 
-    H=zeros(7,7);
-    b=zeros(7,1);
-    chi=0;
-
-  for (i = 1:nmeas)
+    nmeas = size(Z, 1);
+    chi_record = zeros(1, n_iterations)
+    x_new = x
+    kernel_threshold = 100;
     
-    
-    [e,J,status]=errorAndJacobian(x_new, Z(i,:),odometry(i,:));
-    chi+=e'*e;
-    if (chi>kernel_threshold)
-      e*=sqrt(kernel_threshold/chi);
-      chi=kernel_threshold;
-    endif
-    H+=eye(7)*0.01;
-    H+=J'*J;
-    b+=J'*e;
-    
-  endfor
+    for (j = 1:n_iterations)
+        j
 
-  dx=-H\b;
-  x_new += dx';
+        H = zeros(7, 7);
+        b = zeros(7, 1);
+        chi = 0;
+        current_pose = [0,0,0];
+        for (i = 1:nmeas)
 
-  x_new(7)=wrapToPi(x_new(7));
+            [e, J, current_pose,status] = errorAndJacobian(x_new, Z(i, :),encoder_max_values,current_pose);
+            % if(status==-1)
+            %   continue
+            % endif
+            chi += e' * e;
 
-  chi_set = [chi_set;chi];
-  endfor
+            % if (chi > kernel_threshold)
+            %     e *= sqrt(kernel_threshold / chi);
+            %     chi = kernel_threshold;
+            % endif
+
+            
+            H += J' * J;
+            b += J' * e;
+
+        endfor
+        H += eye(7) * 0.01;   % initialize with damping once
+
+        dx=-H \ b;
+        x_new += dx';
+
+        x_new(7) = wrapToPi(x_new(7));
+
+        chi_record(j) = chi;
+    endfor
+
 end

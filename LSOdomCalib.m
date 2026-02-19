@@ -32,6 +32,9 @@ MAX_INCREMENTAL_VARIABLE = 2^32;
 
 NOMINAL_PARAMS = [0.1 0.0106141 0 1.4];
 SENSOR_TRANSLATION_WRT_ROBOT = [1.5, 0, 0];
+
+SAMPLE_VALUE = 10;
+N_ITERATIONS = 50;
 ################################
 
 if (plot_) % Init figures
@@ -42,7 +45,7 @@ if (plot_) % Init figures
 
 endif
 
-incremental_values_rel = get_relative_ticks(incremental_values, MAX_INCREMENTAL_VARIABLE);
+incremental_values_rel = compute_relative_ticks(incremental_values, MAX_INCREMENTAL_VARIABLE);
 incremental_values_rel(size(incremental_values_rel, 1) + 1) = zeros(1, size(incremental_values_rel, 2)); % Padding
 
 my_robot_odometry = compute_odometry_trajectory(NOMINAL_PARAMS, [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES);
@@ -65,41 +68,52 @@ endif
 if (plot_)
 
     h5 = my_plot(sensor_gt_values, calibrated_sensor_odometry_plot, 5, 'r-');
-    legend([h5], {'Calibrated sensor odometry'}); %, "My robot odometry"});
+    %legend([h5], {'Calibrated sensor odometry'}); %, "My robot odometry"});
 
 endif
 
-%skip_value = 5
-% n_iterations = 30
-% skipped_meas = skip_measurements(sensor_gt_values, skip_value = skip_value);
-% h6 = plot(skipped_meas(:,1),skipped_meas(:,2), 'g.', 'linewidth', 2);
-%     hold on;
-% disp('computing calibration parameters');
 
-%skipped_absolute_values = skip_measurements(absolute_values(1:size(absolute_values,1)-1,:),skip_value = skip_value);
+sampled_calibrated_sensor = sample_measurements(sensor_gt_values, sample_value = SAMPLE_VALUE);
+sampled_my_sensor_odometry = sample_measurements(my_sensor_odometry,sample_value = SAMPLE_VALUE);
 
-% skipped_absolute_values = skip_measurements(absolute_values,skip_value = skip_value);
-%skipped_incremental_values_rel = skip_measurements(incremental_values_rel, skip_value = skip_value);
-% skipped_sensor_gt = skip_measurements(sensor_gt_values,skip_value = skip_value);
-% skipped_my_robot_odometry = skip_measurements(my_robot_odometry,skip_value = skip_value);
+%sampled_robot_odometry = sample_measurements(robot_odometry_values,sample_value = SAMPLE_VALUE);
+sampled_my_robot_odometry = sample_measurements(my_robot_odometry,sample_value = SAMPLE_VALUE);
 
-% % %compute the calibration parameters
-% [X,chi]=oneRound([nominal_params,1.5,0,0],[skipped_absolute_values,skipped_incremental_values_rel,skipped_sensor_gt],skipped_my_robot_odometry, n_iterations);
-% X
-% calibrated_my_robot_odometry = stack_odometry(X(1:4),[absolute_values,incremental_values_rel], encoder_max_values);
-% calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry,X(5:7));
+sampled_absolute_values = sample_measurements(absolute_values,sample_value = SAMPLE_VALUE);
+sampled_incremental_values_rel = sample_measurements(incremental_values_rel, sample_value = SAMPLE_VALUE);
+
+if(plot_)
+
+    h6 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'y.');
+    h7 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'g-');
+
+    %disp('computing calibration parameters');
+
+
+    h7 = my_plot(sampled_my_robot_odometry,robot_odometry_plot, 10, 'y.');
+
+    h8 = my_plot(sampled_my_sensor_odometry,sensor_odometry_plot, 10, 'y.');
+endif
+
+% Compute the calibration parameters
+
+[X,chi]=oneRound([NOMINAL_PARAMS,SENSOR_TRANSLATION_WRT_ROBOT],[sampled_absolute_values,sampled_incremental_values_rel,sampled_calibrated_sensor, sampled_my_robot_odometry], N_ITERATIONS,ENCODER_MAX_VALUES);
+calibrated_my_robot_odometry = compute_odometry_trajectory(X(1:4),[absolute_values,incremental_values_rel], ENCODER_MAX_VALUES);
+calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry,X(5:7));
+h10 = my_plot(calibrated_my_sensor_odometry,calibrated_sensor_odometry_plot, 2, 'k-');
+
 % h5 = plot(calibrated_my_sensor_odometry(:,1),calibrated_my_sensor_odometry(:,2), 'g-', 'linewidth', 2);
 %     hold on;
 
-% if plot_
+if plot_
 
-%     j = figure(2);
-%     j1 = plot(chi(:), 'k-', 'linewidth', 2);
-%         hold on;
-% endif
+    j = figure(4);
+    j1 = plot(chi(:), 'k-', 'linewidth', 2);
+        hold on;
+endif
 
 if (plot_)
-    disp("Press Enter to exit");
+    disp("Press anything to exit");
     pause;
 
 endif
