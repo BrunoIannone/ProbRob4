@@ -1,98 +1,87 @@
 close all
 clear
 clc
+more off;
 
 #import 2d geometry utils
 source "./tools/utilities/geometry_helpers_2d.m"
 source "./tools/utilities/J_numeric.m"
 
-#addpath "./exercise/"
 pkg load quaternion
 pkg load mapping
+
+#### Flags ####
 plot_ = true;
-if(plot_)
-    h = figure(1);
-endif
+############
 
-more off;
-#load the calibration matrix
-sensor_translation_wrt_robot = [1.5,0,0]
+#### Load data matrix ####
 disp('Loading data matrix');
-Z=load("./data/dataset_octave.txt");
+Z = load("./data/dataset_octave.txt");
+
+#### Assign data ####
 disp('Assign data');
+absolute_values = Z(:, 2);
+incremental_values = Z(:, 3);
+robot_odometry_values = Z(:, 4:6);
+sensor_gt_values = Z(:, 7:9);
+################################
 
-nominal_params = [0.1 0.0106141 0 1.4];
-global encoder_max_values;
-encoder_max_values = [8192 5000];
-max_incremental_variable = 2^32;
+#### Constants ####
+ENCODER_MAX_VALUES = [8192 5000];
+MAX_INCREMENTAL_VARIABLE = 2^32;
 
-absolute_values = Z(36:500,2);
-incremental_values = Z(35:500,3);
-robot_odometry_values = Z(36:500,4:6);
-sensor_gt_values = Z(36:500,7:9);
-sensor_odometry_values=compute_sensor_odometry(robot_odometry_values,sensor_translation_wrt_robot);
+NOMINAL_PARAMS = [0.1 0.0106141 0 1.4];
+SENSOR_TRANSLATION_WRT_ROBOT = [1.5, 0, 0];
+################################
 
-%rot = quaternion(config(4,1:4)')
-r_T_l = [[1,0,1.5];
-         [0,1, 0 ];
-         [0,0, 1 ];
-         ];
-#compute the ground truth trajectory
-if(plot_)
-    %disp("Display robot odometry")
+if (plot_) % Init figures
 
-    % h1 = plot(robot_odometry_values(:,1),robot_odometry_values(:,2),'b-', 'linewidth', 5);
-    % hold on;
-
-    disp("Display sensor GT")
-    h2 = plot(sensor_gt_values(:,1),sensor_gt_values(:,2),'r-', 'linewidth',2);
-
-    hold on;
-
-    % disp("Display sensor odometry")
-    % h3 = plot(sensor_odometry_values(:,1),sensor_odometry_values(:,2),'y-', 'linewidth', 5);
-
-    % hold on;
-    
-    %legend([h1 h2 h3], {'Robot odometry', 'Sensor GT', 'Sensor odometry'});
+    robot_odometry_plot = init_figure(1, 'Robot Odometry', 'World x', 'World y');
+    sensor_odometry_plot = init_figure(2, 'Sensor Odometry', 'World x', 'World y');
+    calibrated_sensor_odometry_plot = init_figure(3, 'Calibrated sensor Odometry', 'World x', 'World y');
 
 endif
 
-incremental_values_rel= get_relative_ticks(incremental_values,max_incremental_variable);
-size(incremental_values)
-size(incremental_values_rel)
-% incremental_values_rel
-% pause (100)
-my_robot_odometry = stack_odometry(nominal_params,[absolute_values,incremental_values_rel], encoder_max_values);
+incremental_values_rel = get_relative_ticks(incremental_values, MAX_INCREMENTAL_VARIABLE);
+incremental_values_rel(size(incremental_values_rel, 1) + 1) = zeros(1, size(incremental_values_rel, 2)); % Padding
 
-disp("Display my robot odometry")
-if(plot_)
-    h4 = plot(my_robot_odometry(:,1),my_robot_odometry(:,2), 'g.', 'linewidth', 2);
-    %legend([h1 h2 h3 h4], {'Robot odometry', 'Sensor GT', 'Sensor odometry', "My robot odometry"});
-    hold on;
+my_robot_odometry = compute_odometry_trajectory(NOMINAL_PARAMS, [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES);
+
+if (plot_)
+    h1 = my_plot(robot_odometry_values, robot_odometry_plot, 5, 'r-');
+    h2 = my_plot(my_robot_odometry, robot_odometry_plot, linewidth = 2, 'g-');
+    legend([h1 h2], {'Robot odometry', "My robot odometry"});
 endif
 
-my_sensor_odometry = compute_sensor_odometry(my_robot_odometry,sensor_translation_wrt_robot);
-if(plot_)
-    
-    h5 = plot(my_sensor_odometry(:,1),my_sensor_odometry(:,2), 'k-', 'linewidth', 2);
-    hold on;
-    %legend([h1 h2 h3 h4 h5], {'Robot odometry', 'Sensor GT', 'Sensor odometry', "My robot odometry", "My sensor odometry"});
+sensor_odometry_values = compute_sensor_odometry(robot_odometry_values, SENSOR_TRANSLATION_WRT_ROBOT);
+my_sensor_odometry = compute_sensor_odometry(my_robot_odometry, SENSOR_TRANSLATION_WRT_ROBOT);
+
+if (plot_)
+    h3 = my_plot(sensor_odometry_values, sensor_odometry_plot, 5, 'r-');
+    h4 = my_plot(my_sensor_odometry, sensor_odometry_plot, linewidth = 2, 'g-');
+    legend([h3 h4], {'Sensor odometry', "My robot odometry"});
+endif
+
+if (plot_)
+
+    h5 = my_plot(sensor_gt_values, calibrated_sensor_odometry_plot, 5, 'r-');
+    legend([h5], {'Calibrated sensor odometry'}); %, "My robot odometry"});
 
 endif
-skip_value = 5
-n_iterations = 30
-skipped_meas = skip_measurements(sensor_gt_values,skip_value=skip_value);
-h6 = plot(skipped_meas(:,1),skipped_meas(:,2), 'g.', 'linewidth', 2);
-    hold on;
-disp('computing calibration parameters');
+
+%skip_value = 5
+% n_iterations = 30
+% skipped_meas = skip_measurements(sensor_gt_values, skip_value = skip_value);
+% h6 = plot(skipped_meas(:,1),skipped_meas(:,2), 'g.', 'linewidth', 2);
+%     hold on;
+% disp('computing calibration parameters');
 
 %skipped_absolute_values = skip_measurements(absolute_values(1:size(absolute_values,1)-1,:),skip_value = skip_value);
 
-skipped_absolute_values = skip_measurements(absolute_values,skip_value = skip_value);
-skipped_incremental_values_rel = skip_measurements(incremental_values_rel,skip_value = skip_value);
-skipped_sensor_gt = skip_measurements(sensor_gt_values,skip_value = skip_value);
-skipped_my_robot_odometry = skip_measurements(my_robot_odometry,skip_value = skip_value)
+% skipped_absolute_values = skip_measurements(absolute_values,skip_value = skip_value);
+%skipped_incremental_values_rel = skip_measurements(incremental_values_rel, skip_value = skip_value);
+% skipped_sensor_gt = skip_measurements(sensor_gt_values,skip_value = skip_value);
+% skipped_my_robot_odometry = skip_measurements(my_robot_odometry,skip_value = skip_value);
 
 % % %compute the calibration parameters
 % [X,chi]=oneRound([nominal_params,1.5,0,0],[skipped_absolute_values,skipped_incremental_values_rel,skipped_sensor_gt],skipped_my_robot_odometry, n_iterations);
@@ -109,6 +98,8 @@ skipped_my_robot_odometry = skip_measurements(my_robot_odometry,skip_value = ski
 %         hold on;
 % endif
 
-if(plot_)
-    waitfor(h);
+if (plot_)
+    disp("Press Enter to exit");
+    pause;
+
 endif
