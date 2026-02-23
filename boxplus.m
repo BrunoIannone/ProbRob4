@@ -1,4 +1,4 @@
-function [sensor_state robot_state] = boxplus(x, increment_vector)
+function [robot_state sensor_state] = boxplus(x, increment_vector)
 
 robot_state = x(1:4);
 robot_increment = increment_vector(1:4);

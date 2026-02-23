@@ -33,8 +33,8 @@ MAX_INCREMENTAL_VARIABLE = 2^32;
 NOMINAL_PARAMS = [0.1 0.0106141 0 1.4];
 SENSOR_TRANSLATION_WRT_ROBOT = [1.5, 0, 0];
 
-SAMPLE_VALUE = 10;
-N_ITERATIONS = 50;
+SAMPLE_VALUE = 5;
+N_ITERATIONS = 10;
 ################################
 
 if (plot_) % Init figures
@@ -46,14 +46,15 @@ if (plot_) % Init figures
 endif
 
 incremental_values_rel = compute_relative_ticks(incremental_values, MAX_INCREMENTAL_VARIABLE);
-incremental_values_rel(size(incremental_values_rel, 1) + 1) = zeros(1, size(incremental_values_rel, 2)); % Padding
+%incremental_values_rel(size(incremental_values_rel, 1) + 1) = zeros(1, size(incremental_values_rel, 2)); % Padding
 
-my_robot_odometry = compute_odometry_trajectory(NOMINAL_PARAMS, [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES);
-
+absolute_values = absolute_values(1:size(absolute_values,1)-1);
+my_robot_odometry = compute_odometry_trajectory_corso(stack_odometry(NOMINAL_PARAMS, [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES));
 if (plot_)
     h1 = my_plot(robot_odometry_values, robot_odometry_plot, 5, 'r-');
-    h2 = my_plot(my_robot_odometry, robot_odometry_plot, linewidth = 2, 'g-');
-    legend([h1 h2], {'Robot odometry', "My robot odometry"});
+    h2 = my_plot(my_robot_odometry, robot_odometry_plot, linewidth = 2, 'k-');
+
+    %legend([h1 h2], {'Robot odometry', "My robot odometry"});
 endif
 
 sensor_odometry_values = compute_sensor_odometry(robot_odometry_values, SENSOR_TRANSLATION_WRT_ROBOT);
@@ -61,8 +62,9 @@ my_sensor_odometry = compute_sensor_odometry(my_robot_odometry, SENSOR_TRANSLATI
 
 if (plot_)
     h3 = my_plot(sensor_odometry_values, sensor_odometry_plot, 5, 'r-');
-    h4 = my_plot(my_sensor_odometry, sensor_odometry_plot, linewidth = 2, 'g-');
-    legend([h3 h4], {'Sensor odometry', "My robot odometry"});
+    h4 = my_plot(my_sensor_odometry, sensor_odometry_plot, linewidth = 2, 'k-');
+
+    %legend([h3 h4], {'Sensor odometry', "My robot odometry"});
 endif
 
 if (plot_)
@@ -73,44 +75,54 @@ if (plot_)
 endif
 
 
-sampled_calibrated_sensor = sample_measurements(sensor_gt_values, sample_value = SAMPLE_VALUE);
-sampled_my_sensor_odometry = sample_measurements(my_sensor_odometry,sample_value = SAMPLE_VALUE);
+% norm(diff(sensor_gt_values(:,1:2)),2,"rows")
 
-%sampled_robot_odometry = sample_measurements(robot_odometry_values,sample_value = SAMPLE_VALUE);
-sampled_my_robot_odometry = sample_measurements(my_robot_odometry,sample_value = SAMPLE_VALUE);
+% sampled_calibrated_sensor = sample_data(sensor_gt_values, sample_value = SAMPLE_VALUE);
 
-sampled_absolute_values = sample_measurements(absolute_values,sample_value = SAMPLE_VALUE);
-sampled_incremental_values_rel = sample_measurements(incremental_values_rel, sample_value = SAMPLE_VALUE);
+% sensor_gt_values_rel = diff(sampled_calibrated_sensor);
 
-if(plot_)
+% for (i = 1:size(sensor_gt_values_rel,1))
+%     sensor_gt_values_rel(i:3) = normalizeAngle(sensor_gt_values_rel(i:3));
+% endfor
 
-    h6 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'y.');
-    h7 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'g-');
+% sampled_my_sensor_odometry = sample_data(my_sensor_odometry,sample_value = SAMPLE_VALUE);
+% size(sampled_calibrated_sensor)
+% %sampled_robot_odometry = sample_data(robot_odometry_values,sample_value = SAMPLE_VALUE);
+% sampled_my_robot_odometry = sample_data(my_robot_odometry,sample_value = SAMPLE_VALUE);
 
-    %disp('computing calibration parameters');
+% sampled_absolute_values = sample_data(absolute_values,sample_value = SAMPLE_VALUE);
+% size(sampled_absolute_values)
+% sampled_incremental_values_rel = sample_data(incremental_values_rel, sample_value = SAMPLE_VALUE);
+% size(sampled_incremental_values_rel)
+% if(plot_)
+
+%     h6 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'y.');
+%     h7 = my_plot(sampled_calibrated_sensor,calibrated_sensor_odometry_plot, 2, 'g-');
+
+%     %disp('computing calibration parameters');
 
 
-    h7 = my_plot(sampled_my_robot_odometry,robot_odometry_plot, 10, 'y.');
+%     h7 = my_plot(sampled_my_robot_odometry,robot_odometry_plot, 10, 'y.');
 
-    h8 = my_plot(sampled_my_sensor_odometry,sensor_odometry_plot, 10, 'y.');
-endif
+%     h8 = my_plot(sampled_my_sensor_odometry,sensor_odometry_plot, 10, 'y.');
+% endif
 
 % Compute the calibration parameters
 
-[X,chi]=oneRound([NOMINAL_PARAMS,SENSOR_TRANSLATION_WRT_ROBOT],[sampled_absolute_values,sampled_incremental_values_rel,sampled_calibrated_sensor, sampled_my_robot_odometry], N_ITERATIONS,ENCODER_MAX_VALUES);
-calibrated_my_robot_odometry = compute_odometry_trajectory(X(1:4),[absolute_values,incremental_values_rel], ENCODER_MAX_VALUES);
-calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry,X(5:7));
-h10 = my_plot(calibrated_my_sensor_odometry,calibrated_sensor_odometry_plot, 2, 'k-');
+% [X,chi]=oneRound([NOMINAL_PARAMS,SENSOR_TRANSLATION_WRT_ROBOT],[sampled_absolute_values,sampled_incremental_values_rel,sampled_calibrated_sensor], N_ITERATIONS,ENCODER_MAX_VALUES);
+% calibrated_my_robot_odometry = compute_odometry_trajectory(X(1:4),[absolute_values,incremental_values_rel], ENCODER_MAX_VALUES);
+% calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry,X(5:7));
+% h10 = my_plot(calibrated_my_sensor_odometry,calibrated_sensor_odometry_plot, 2, 'k-');
 
 % h5 = plot(calibrated_my_sensor_odometry(:,1),calibrated_my_sensor_odometry(:,2), 'g-', 'linewidth', 2);
 %     hold on;
 
-if plot_
+% if plot_
 
-    j = figure(4);
-    j1 = plot(chi(:), 'k-', 'linewidth', 2);
-        hold on;
-endif
+%     j = figure(4);
+%     j1 = plot(chi(:), 'k-', 'linewidth', 2);
+%         hold on;
+% endif
 
 if (plot_)
     disp("Press anything to exit");

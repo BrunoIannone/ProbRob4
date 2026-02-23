@@ -8,7 +8,7 @@ t_t = ticks(2); % incremental
 
 max_steering=encoder_max_values(1);
 max_incremental = encoder_max_values(2);
-phi = k_s*(wrapToPi(t_s*2*pi/max_steering))+ steering_offset;
+phi = k_s*(normalizeAngle(t_s*2*pi/max_steering))+ steering_offset;
 ds = k_t*(t_t/max_incremental);
 if(ds == 0)
     delta = [0;0;0];
