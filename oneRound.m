@@ -11,18 +11,19 @@ function [x_new, chi_record] = oneRound(x, Z, n_iterations,encoder_max_values)
         chi = 0;
         for (i = 1:nmeas)
 
-            [e, J] = errorAndJacobian(x_new, Z(i, :),encoder_max_values);
-            
+            [e, J,status] = errorAndJacobian(x_new, Z(i, :),encoder_max_values);
+            if(status == -1)
+                continue
+            endif
             chi += e' * e;
 
             H += J' * J;
             b += J' * e;
 
         endfor
-
+        H+= eye(7)*0.6;
         dx=-H \ b;
-        [ robot_state sensor_state] = boxplus(x_new,dx');
-        x_new = [robot_state'; sensor_state']';
+        x_new= boxplus(x_new,dx')
 
         chi_record(j) = chi;
     endfor

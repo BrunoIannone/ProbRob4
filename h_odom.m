@@ -1,4 +1,4 @@
-function delta = h_odom(x,ticks,theta,encoder_max_values)
+function delta = h_odom(x,ticks,encoder_max_values)
 k_s = x(1);
 k_t = x(2);
 steering_offset = x(3);
@@ -16,7 +16,8 @@ if(ds == 0)
 else
     
     dth = (sin(phi)/l)*ds;
-    dx = cos(theta)*cos(phi)*ds;
-    dy = sin(theta)*cos(phi)*ds;
+    dx = cos(0)*cos(phi)*ds;
+    dy = sin(0)*cos(phi)*ds;
     delta = [dx;dy;dth];
-end
+endif
+endfunction

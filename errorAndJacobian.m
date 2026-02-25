@@ -1,67 +1,34 @@
-function [e, J,current_pose,status] = errorAndJacobian(x,Z,encoder_max_values,current_pose)
-  
-  status = 0;
-  
+function [e, J,status] = errorAndJacobian(x, Z, encoder_max_values)
   ticks = Z(1:2);
-  sensor_meas  = Z(3:5);
+  sensor_meas = Z(3:5);
+  status = 0;
+  pred = get_prediction(x, ticks, encoder_max_values);
+  if all(pred == [0; 0; 0])
+    status = -1;
+    return;
+  endif
+  e = t2v(v2t(sensor_meas)*inv(pred));
   
-  %robot_odometry = Z(:,6:8)
-
-  %current_pose(3) = wrapToPi(current_pose(3));
-  delta_robot = h_odom(x, ticks, current_pose(3), encoder_max_values);
-  % if(delta_robot==[0;0;0])
-
-  %   status = -1;
-  % endif
+  J = zeros(3, 7);
+  epsilon = 1e-6;
   
-
-
-  pred = t2v(v2t(current_pose) * v2t(delta_robot)*v2t(x(5:7)))';
-  %pred(3)=wrapToPi(pred(3));
-  
-  current_pose_ = t2v(v2t(current_pose) * v2t(delta_robot))';
-  
-  e     = (pred-sensor_meas)';
-  e(3) = wrapToPi(e(3));
-  e;
-  J     = zeros(3,7);
-  epsilon = 1e-3;
-  inv_eps2= 0.5/epsilon;
-  
-  for (i=1:7)
-  
-    e_vec = zeros(1,7);
-    e_vec(i)=epsilon;
+  for k = 1:7
+    dx_plus  = zeros(1, 7);
+    dx_minus = zeros(1, 7);
+    dx_plus(k)  =  epsilon;
+    dx_minus(k) = -epsilon;
     
-    xp = x; xp(i) += epsilon;
-    xm = x; xm(i) -= epsilon;
-
-    % if i == 7
-
-    %   xp(i) = wrapToPi(xp(i));
-    %   xm(i) = wrapToPi(xm(i));
-
-    % endif
-    xp;
-    xm;
+    x_plus  = boxplus(x, dx_plus);
+    x_minus = boxplus(x, dx_minus);
     
-    delta_robot_p = h_odom(xp, ticks, current_pose(3), encoder_max_values);
-    pred_p = t2v(v2t(current_pose)*v2t(delta_robot_p)*v2t(xp(5:7)))';
-
-    delta_robot_m = h_odom(xm, ticks, current_pose(3), encoder_max_values);
-    pred_m = t2v(v2t(current_pose) * v2t(delta_robot_m)*v2t(xm(5:7)))';
-    % pred_p(3) = wrapToPi(pred_p(3));
-    % pred_m(3) = wrapToPi(pred_m(3));
-
-    pred_p;
-    pred_m;
-
-    diffe = pred_p - pred_m;
-    diffe(3) = wrapToPi(diffe(3));
+    pred_plus  = get_prediction(x_plus,  ticks, encoder_max_values);
+    pred_minus = get_prediction(x_minus, ticks, encoder_max_values);
     
-    J(:,i) = inv_eps2 * (diffe)';
-    
-  endfor;
-  current_pose = current_pose_;
+    e_plus  = t2v(v2t(sensor_meas)*inv(pred_plus) );
+    e_minus = t2v(v2t( sensor_meas)* inv(pred_minus));
+    diff_ = e_plus - e_minus;
+    diff_(3) = normalizeAngle(diff_(3));
+    J(:, k) = diff_ / (2 * epsilon);
   
-endfunction
+  end
+end
