@@ -134,7 +134,7 @@ $$
 - Domain 
 
   $$
-  \mathbf{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
+  \vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
   $$
 
 Where: 
@@ -155,13 +155,13 @@ $$
 However, out of these we will compute the relative motion of the sensor between pose $s$ and $s$' . Therefore:
 
 $$
-^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s'} | {^st}_{s\prime}\end{pmatrix} \in SE(2)
+^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^st}_{s\prime}\end{pmatrix} \in SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s'} \\ \Delta^sy_{s'} \\ \Delta {^s}\theta_{s'} \end{pmatrix} \in \mathbb{R}^3
+\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix} \in \mathbb{R}^3
 $$
 
 * Define $\boxminus$ operator
@@ -173,15 +173,15 @@ $$
 * Identify prediction function
 
 $$
-h^{[s,s']}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^rx_{r'}\right) \cdot {^{r'}X}_{s'} = {^sX}_{s'}
+h^{[s,s\prime]}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^rx_{r\prime}\right) \cdot {^{r\prime}X}_{s\prime} = {^sX}_{s\prime}
 $$
 
-Where $\Delta ^rx_{r'}$  is the robot relative increment  by the odometry function.
+Where $\Delta ^rx_{r\prime}$  is the robot relative increment  by the odometry function.
 
 **Note:** 
 
 $$
-{^rX}_s = {^{r'}X}_{s'} 
+{^rX}_s = {^{r\prime}X}_{s\prime} 
 $$
 
 They represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved.
@@ -189,7 +189,7 @@ They represent the same relative pose, but the latter expresses the sensor relat
 * Define the error function
 
 $$
-e^{[s,s']}(X) = \text{h}^{[s,s']}(X) \boxminus {^{s}Z}_{s'} = \text{t2v}\left [ \left({^{s}Z}_{s'} \right)^{-1} \cdot {^sX}_{s'} \right]
+e^{[s,s\prime]}(X) = \text{h}^{[s,s\prime]}(X) \boxminus {^{s}Z}_{s\prime} = \text{t2v}\left [ \left({^{s}Z}_{s\prime} \right)^{-1} \cdot {^sX}_{s\prime} \right]
 $$
 
 ### Bicycle model 
