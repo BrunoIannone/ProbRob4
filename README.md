@@ -122,7 +122,7 @@ $$
 * Define $\boxplus$ operator
 
 $$
-{\mathbf{x}\prime}_r = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
+{\vec{x}\prime}_r = \vec{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
@@ -167,7 +167,7 @@ $$
 * Define $\boxminus$ operator
 
 $$
-\Delta {^{s}z}_{s'}= {^{s}\bar{Z}}_{s'} \boxminus {^{s}Z}_{s'}=\text{t2v}\left[\left( {^{s}Z}_{s'} \right)^{-1} \cdot {^{s}\bar{Z}}_{s'}\right]
+\Delta {^{s}z}_{s\prime}= {^{s}\bar{Z}}_{s\prime} \boxminus {^{s}Z}_{s\prime}=\text{t2v}\left[\left( {^{s}Z}_{s\prime} \right)^{-1} \cdot {^{s}\bar{Z}}_{s\prime}\right]
 $$
 
 * Identify prediction function
