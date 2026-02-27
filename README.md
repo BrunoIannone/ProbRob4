@@ -89,14 +89,14 @@ Each record in the dataset is composed of the following fields:
 * Qualify the domain
 
 $$
-\vec{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix} \in \mathbb{R}^4, \quad
+\boldsymbol{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix} \in \mathbb{R}^4, \quad
 {^rX}_s = \begin{pmatrix} {^rR}_s|{^rt}_s \end{pmatrix} \in SE(2)
 $$
 
 Therefore:
 
 $$
-X = \{ x_r, {^rX}_s \} \in \mathbb{R}^4 \times SE(2)
+X = \{ \boldsymbol{x}_r, {^rX}_s \} \in \mathbb{R}^4 \times SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
@@ -119,27 +119,29 @@ $$
 \end{pmatrix} \in \mathbb{R}^3
 $$
 
-* Define $\boxplus$ operator 
-    - $$
-      x_r' = x_r + \Delta x_r \rightarrow\text{No} \boxplus \text{because Euclidean}
-      $$
-    - $$
-      {}^{r}X'_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
-      $$
+* Define $\boxplus$ operator
+
+$$
+\boldsymbolx}_r' = x\boldsymbol{_}r + \Delta x_r \rightarrow\text{No} \boxplus \text{because Euclidean}
+$$
+
+$$
+{}^{r}X'_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
+$$
 
 ### Controls
 
-* Domain 
+- Domain 
 
   $$
-  \vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
+  \boldsymbol{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
   $$
 
 Where: 
 
-- Absolute encoder $\rightarrow{}$ Steering ticks: $t_s$
+        - Absolute encoder $\rightarrow{}$ Steering ticks: $t_s$
 
-          -Incremental encoder $\rightarrow{}$ Traction ticks: $t_t$
+        - Incremental encoder $\rightarrow{}$ Traction ticks: $t_t$
 
 ### Measurements
 
@@ -178,7 +180,7 @@ $$
 
 Where $\Delta ^rx_{r'}$  is the robot relative increment  by the odometry function.
 
-**Note:** ${^rX}_s$  and ${^{r'}X}_{s'}$ represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved. 
+**Note:**	${^rX}_s$  and ${^{r'}X}_{s'}$ represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved. 
 
 * Define the error function
 
