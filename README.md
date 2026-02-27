@@ -126,7 +126,7 @@ $$
 $$
 
 $$
-{}^{r}{X′}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
+{}^{r}{X\prime}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
 $$
 
 ### Controls
@@ -155,7 +155,7 @@ $$
 However, out of these we will compute the relative motion of the sensor between pose $s$ and $s$' . Therefore:
 
 $$
-^{s}Z_{s'} = \begin{pmatrix} {^sR}_{s'} | {^st}_{s'}\end{pmatrix} \in SE(2)
+^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s'} | {^st}_{s\prime}\end{pmatrix} \in SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
@@ -183,8 +183,8 @@ Where $\Delta ^rx_{r'}$  is the robot relative increment  by the odometry functi
 $$
 {^rX}_s = {^{r'}X}_{s'} 
 $$
-They represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved.
 
+They represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved.
 
 * Define the error function
 
