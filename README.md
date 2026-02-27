@@ -258,7 +258,7 @@ $$
 t_k = t_{k+1} - t_{k-1} \quad k = 1,2,...,T
 $$
 
-In the previous formula, we omit the wraparound handling for brevity. The full implementation is in $\text{compute\_relative\_ticks}()$ function.
+In the previous formula, we omit the wraparound handling for brevity. The full implementation is in compute_relative_ticks() function.
 
 #### Tracker pose
 
@@ -266,13 +266,28 @@ As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cann
 
 We compute the relative pose between two absolute ones as follows:
 
-Given two poses ${^wT}_s$ ,${^wT}_s\prime$
+Given two poses ${^wT}_s$ , ${^wT}_s\prime$
 
 $$
-{^sT}_s\prime = \left({^wT}_s\right)^{-1} * {^wT}_s\prime
+{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} * {^wT}_{s\prime}
 $$
 
 We do this for each pose in the dataset.
 
-This operation is carried on by the $\text{compute\_increments()}$ function.
+This operation is carried on by the computeincrements() function.
 
+#### Least squares
+
+With the current setting, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 1\times7$ vector, the Jacobian $J$ is a $3\times7$ matrix.
+
+Moreover, we assume $\Omega = I$.
+
+From this, we proceed using the well known loop ensuring that:
+
+* $H$ is invertible by adding a small value to it before computing $\Delta x$:
+
+$$
+H = H+ I_{7\times7} \cdot 0.001
+$$
+
+* If no motion occurred, we do nothing
