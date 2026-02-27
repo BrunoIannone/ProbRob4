@@ -28,13 +28,13 @@ The first 10 lines contain:
 - **Kinematic model**: traction_drive_wheel (front-tractor tricycle)
 - **Kinematic parameters to be estimated**
 - **Initial guesses** for the parameters
-- **Encoder order** 
+- **Encoder type** 
 - **Encoder maximum ranges**
 - **Laser w.r.t. base link transform** 
 
 > [!IMPORTANT]
 >
-> The encoder order and ranges are critical for correctly interpreting the encoder tick data.
+> The encoder type and ranges are critical for correctly interpreting the encoder tick data.
 
 ---
 
@@ -89,32 +89,32 @@ Each record in the dataset is composed of the following fields:
 * Qualify the domain
 
 $$
-\boldsymbol{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix}^T \in \mathbb{R}^4, \quad
-{^rX}_s = \begin{pmatrix} {^rR}_s|{^rt}_s \end{pmatrix} \in SE(2)
+\vec{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix}^T \in \mathbb{R}^4, \quad
+{^rX}_s = \begin{pmatrix} {^rR}_s|{^r\vec{t}}_s \end{pmatrix} \in SE(2)
 $$
 
 Therefore:
 
 $$
-X = \\{ \boldsymbol{x}_r, {^rX}_s \\} \in \mathbb{R}^4 \times SE(2)
+X = \\{ \vec{x}_r, {^rX}_s \\} \in \mathbb{R}^4 \times SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta x = \begin{pmatrix} \Delta x_r  \\ \Delta x_s \end{pmatrix}^T \in \mathbb{R}^7
+\Delta \vec{x} = \begin{pmatrix} \Delta \vec{x}_r  \\ \Delta \vec{x}_s \end{pmatrix}^T \in \mathbb{R}^7
 $$
 
 Where:
 
 $$
-\Delta x_r = \begin{pmatrix}
+\Delta \vec{x}_r = \begin{pmatrix}
 \Delta k_s \\ \Delta k_t \\ \Delta so \\ \Delta b
 \end{pmatrix}^T \in \mathbb{R}^4
 $$
 
 $$
-\Delta {^rx}_s = \begin{pmatrix}
+\Delta {^r\vec{x}}_s = \begin{pmatrix}
 \Delta ^rx_s \\ \Delta ^ry_s \\ \Delta ^r\theta_s
 \end{pmatrix}^T \in \mathbb{R}^3
 $$
@@ -122,11 +122,11 @@ $$
 * Define $\boxplus$ operator
 
 $$
-{\vec{x}\prime}_r = \vec{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
+{\vec{x}\prime}_r = \vec{x}_r + \Delta \vec{x}_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
-{}^{r}{X\prime}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
+{}^{r}{X\prime}_s = {}^{r}X_s \boxplus \Delta {}^{r}\vec{x}_s = \text{v2t}(\Delta {}^{r}\vec{x}_s) \cdot {}^{r}X_s
 $$
 
 ### Controls
@@ -149,34 +149,34 @@ Where:
 An external system provide the pose of the sensor in the world, namely
 
 $$
-{^w}Z_s = \begin{pmatrix} {^wR}_s | {^wt}_s\end{pmatrix} \in SE(2)
+{^w}Z_s = \begin{pmatrix} {^wR}_s | {^w\vec{t}}_s\end{pmatrix} \in SE(2)
 $$
 
 However, out of these we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . Therefore:
 
 $$
-^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^st}_{s\prime}\end{pmatrix} \in SE(2)
+^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^s\vec{t}}_{s\prime}\end{pmatrix} \in SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta {^sz}_{s{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix}^T \in \mathbb{R}^3
+\Delta {^s\vec{z}}_{s{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix}^T \in \mathbb{R}^3
 $$
 
 * Define $\boxminus$ operator
 
 $$
-\Delta {^{s}z}_{s\prime}= {^{s}\bar{Z}}_{s\prime} \boxminus {^{s}Z}_{s\prime}=\text{t2v}\left[\left( {^{s}Z}_{s\prime} \right)^{-1} \cdot {^{s}\bar{Z}}_{s\prime}\right]
+\Delta {^{s}\vec{z}}_{s\prime}= {^{s}\bar{Z}}_{s\prime} \boxminus {^{s}Z}_{s\prime}=\text{t2v}\left[\left( {^{s}Z}_{s\prime} \right)^{-1} \cdot {^{s}\bar{Z}}_{s\prime}\right]
 $$
 
 * Identify prediction function
 
 $$
-h^{[s,s\prime]}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^rx_{r\prime}\right) \cdot {^{r\prime}X}_{s\prime} = {^sX}_{s\prime}
+h^{[s,s\prime]}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^r\vec{x}_{r\prime}\right) \cdot {^{r\prime}X}_{s\prime} = {^sX}_{s\prime}
 $$
 
-Where $\Delta ^rx_{r\prime}$  is the robot relative increment  by the odometry function.
+Where $\Delta ^r\vec{x}_{r\prime}$  is the robot relative increment  by the odometry function.
 
 **Note:** 
 
@@ -216,7 +216,7 @@ $$
 
 **Note:**  $max_t$ and $max_s$ are the maximum encoder value for traction and steering encoders.
 
-Since we are providing relative increments, $\theta = 0$. Therefore, we can further simplifu the model as follows:
+Since we are providing relative increments, $\theta = 0$. Therefore, we can further simplify the model as follows:
 
 $$
 \begin{aligned}
@@ -226,7 +226,7 @@ $$
 \end{aligned}
 $$
 
-To validate our choice, we can compare the model pose in the dataset and the one resulting from our model
+To validate our choices, we can compare the model pose in the dataset and the one resulting from our model
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/robot_odometry_validation.png)
 
@@ -238,7 +238,7 @@ Let us now put side to side the sensor's trajectory given by the tracker with th
 
 ![Sensor odometry validation: comparison of sensor odometry vs. tracker gt](./images/sensor_odometry_vs_gt_validation.png)
 
-*Figure 2: Comparison of  sensor's tracked pose (red) against sensor odometry (green).*
+*Figure 2: Comparison of  sensor's tracked trajectory (red) against sensor odometry (green).*
 
 ## Solution
 
@@ -250,7 +250,7 @@ We approach the calibration as a least squares problem with Gauss-Newton method 
 
 The absolute encoder ticks can be used as they are. On the other hand, incremental ticks have to be processed first.
 
-In order to have a valid value, we need to compute their difference between two consecutive motions. 
+In order to have a valid value, we need to compute the difference between two consecutive motions. 
 
 Namely, ticks at step $k$ are computed as:
 
@@ -262,19 +262,19 @@ In the previous formula, we omit the wraparound handling for brevity. The full i
 
 #### Tracker pose
 
-As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cannot use the raw tracker information as the give the sensor pose in the world (${^wT}_s$). 
+As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cannot use the raw tracker information as it gives the sensor pose in the world (${^wT}_s$). 
 
 We compute the relative pose between two absolute ones as follows:
 
 Given two poses ${^wT}_s$ , ${^wT}_{s\prime}$
 
 $$
-{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} * {^wT}_{s\prime}
+{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} \cdot {^wT}_{s\prime}
 $$
 
 We do this for each pose in the dataset.
 
-This operation is carried on by the computeincrements() function.
+This operation is carried on by the compute_increments() function.
 
 #### Least squares
 
@@ -284,7 +284,7 @@ Moreover, we assume $\Omega = I$.
 
 From this, we proceed using the well known loop:
 
-* We ensure that $H$ is invertible by adding a small value to it before computing $\Delta x$:
+* We ensure that $H$ is invertible by adding a small value to it before computing $\Delta \vec{x}$:
 
 $$
 H = H+ I_{7\times7} \cdot 0.001
@@ -301,16 +301,37 @@ After two iteration, this is the final result
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation.png)
 
+Figure 3: Comparison of  sensor's tracked pose (red) against the calibrated sensor odometry (green).
+
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi.png)
 
-As we can see, although not perfectly overlapping, now the sensor odometry shape is very similar to the ground truth, with a chi value starting from 0.7 and decreasing to 0.3 after one iteration. It is interesting to notice how the chi values change when we run the least square iteration also when the robot is not moving:
+Figure 4: Chi evolution per iteration.
+
+As we can see from Figure 3, although not perfectly overlapping, now the sensor odometry shape is very similar to the ground truth.
+
+From Figure 4 we can observe that the chi value starts from 0.7 and decreases to 0.3 after one iteration. 
+
+**The optimization finds the following values:**
+
+- **Ks**: 0.60209
+- **kt**: 0.0086483
+- **so**: -0.099539
+- **b**: 1.3218
+- **2D sensor pose**:
+    - x: 1.6153
+    - y: 0.2917
+    - θ: -0.031365
+
+Moreover, It is interesting to show how the chi values change when we run the least square iteration also when the robot is not moving:
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi_bad.png)
 
-Even if it is able to find a valid solution, we understand why is it better to do nothing when the robot does not move.
+Figure 5: Chi value per iteration computed over all measurements.
+
+Even if it is able to find a valid solution, we understand why it is better to do nothing when the robot does not move.
 
 ### Animation 
 
-
-
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/live.gif)
+
+Figure 6: Animation of the calibration evolution per iteration
