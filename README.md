@@ -133,8 +133,6 @@ $$
 
 - Domain 
 
-
-
 $$
 \vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix}^T \in \mathbb{R}^2
 $$
@@ -154,7 +152,7 @@ $$
 {^w}Z_s = \begin{pmatrix} {^wR}_s | {^wt}_s\end{pmatrix} \in SE(2)
 $$
 
-However, out of these we will compute the relative motion of the sensor between pose $s$ and $s$' . Therefore:
+However, out of these we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . Therefore:
 
 $$
 ^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^st}_{s\prime}\end{pmatrix} \in SE(2)
@@ -209,12 +207,14 @@ $$
 Where
 
 $$
-\phi = k_s \cdot \text{normalizeAngle}\left( \frac{2\pi t_s}{\text{max}_s} \right) + \delta_s
+\phi = k_s \cdot \text{normalizeAngle}\left( \frac{2\pi t_s}{\text{max}_s} \right) + \text{so}
 $$
 
 $$
 ds = k_t \cdot \frac{t_t}{\text{max}_t}
 $$
+
+**Note:**  $max_t$ and $max_s$ are the maximum encoder value for traction and steering encoders.
 
 Since we are providing relative increments, $\theta = 0$. Therefore, we can further simplifu the model as follows:
 
@@ -228,8 +228,51 @@ $$
 
 To validate our choice, we can compare the model pose in the dataset and the one resulting from our model
 
-![Robot Odometry Validation: Comparison of Estimated Path vs. Ground Truth](./images/robot_odometry_validation.png)
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/robot_odometry_validation.png)
 
 *Figure 1: Comparison of given robot odometry (red) against bicycle model  (green).*
 
-As we can see, the overlap almost perfectly.
+As we can see, they overlap almost perfectly.
+
+Let us now put side to side the sensor's trajectory given by the tracker with the odometry:
+
+![Sensor odometry validation: comparison of sensor odometry vs. tracker gt](./images/sensor_odometry_vs_gt_validation.png)
+
+*Figure 2: Comparison of  sensor's tracked pose (red) against sensor odometry (green).*
+
+## Solution
+
+We approach the calibration as a least squares problem with Gauss-Newton method using the methodology that we already described.
+
+### Pre-processing
+
+#### Encoder ticks
+
+The absolute encoder ticks can be used as they are. On the other hand, incremental ticks have to be processed first.
+
+In order to have a valid value, we need to compute their difference between two consecutive motions. 
+
+Namely, ticks at step $k$ are computed as:
+
+$$
+t_k = t_{k+1} - t_{k-1} \quad k = 1,2,...,T
+$$
+
+In the previous formula, we omit the wraparound handling for brevity. The full implementation is in $\text{compute\_relative\_ticks}()$ function.
+
+#### Tracker pose
+
+As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cannot use the raw tracker information as the give the sensor pose in the world (${^wT}_s$). 
+
+We compute the relative pose between two absolute ones as follows:
+
+Given two poses ${^wT}_s$ ,${^wT}_s\prime$
+
+$$
+{^sT}_s\prime = \left({^wT}_s\right)^{-1} * {^wT}_s\prime
+$$
+
+We do this for each pose in the dataset.
+
+This operation is carried on by the $\text{compute\_increments()}$ function.
+
