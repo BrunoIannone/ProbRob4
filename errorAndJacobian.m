@@ -4,12 +4,12 @@ function [e, J, status] = errorAndJacobian(x, Z, encoder_max_values)
     status = 0;
     pred = get_prediction(x, ticks, encoder_max_values);
 
-    if pred == -1
+    if pred == -1%No motion occurred
         status = -1;
         return;
     endif
 
-    e = t2v(v2t(sensor_meas) * inv(pred));
+    e = t2v(inv(v2t(sensor_meas)) * pred);
 
     J = zeros(3, 7);
     epsilon = 1e-6;
@@ -26,11 +26,11 @@ function [e, J, status] = errorAndJacobian(x, Z, encoder_max_values)
         pred_plus = get_prediction(x_plus, ticks, encoder_max_values);
         pred_minus = get_prediction(x_minus, ticks, encoder_max_values);
 
-        e_plus = t2v(v2t(sensor_meas) * inv(pred_plus));
-        e_minus = t2v(v2t(sensor_meas) * inv(pred_minus));
+        e_plus = t2v(inv(v2t(sensor_meas)) * pred_plus);
+        e_minus = t2v(inv(v2t(sensor_meas)) * pred_minus);
         diff_ = e_plus - e_minus;
         J(:, k) = diff_ / (2 * epsilon);
 
-    end
+    endfor
 
 end

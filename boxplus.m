@@ -9,4 +9,5 @@ function x_new = boxplus(x, increment_vector)
     sensor_state = t2v(v2t(sensor_increment) * v2t(sensor_state))'; %row
 
     x_new = [robot_state, sensor_state];
+    
 endfunction

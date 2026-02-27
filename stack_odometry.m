@@ -5,6 +5,6 @@ function odom = stack_odometry(x, ticks, encoder_max_values)
 
         odom(i, :) = h_odom(x, ticks(i, :), encoder_max_values)';
 
-    end
+    endfor
 
-end
+endfunction
