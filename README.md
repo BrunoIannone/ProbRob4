@@ -122,11 +122,11 @@ $$
 * Define $\boxplus$ operator
 
 $$
-\mathbf{x}_r^{\prime} = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
+\mathbf{x}_r^{\text{'}} = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
-{}^{r}X^{\prime}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
+{}^{r}X^{\text{'}}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
 $$
 
 ### Controls
