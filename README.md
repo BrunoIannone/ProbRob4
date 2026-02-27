@@ -134,7 +134,7 @@ $$
 - Domain 
 
   $$
-  \vec{u} = \begin{pmatrix} t_s \\\ t_t \end{pmatrix}^T \in \mathbb{R}^2
+  \vec{u} = \begin{pmatrix} t_s t_t \end{pmatrix}^T \in \mathbb{R}^2
   $$
 
 Where: 
@@ -161,7 +161,7 @@ $$
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix}^T \in \mathbb{R}^3
+\Delta {^sz}_{s{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix}^T \in \mathbb{R}^3
 $$
 
 * Define $\boxminus$ operator
