@@ -89,7 +89,7 @@ Each record in the dataset is composed of the following fields:
 * Qualify the domain
 
 $$
-\boldsymbol{x}_r = \begin{pmatrix} k_s \\\\ k_t \\\\ so \\\\ b \end{pmatrix} \in \mathbb{R}^4, \quad
+\boldsymbol{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix}^T \in \mathbb{R}^4, \quad
 {^rX}_s = \begin{pmatrix} {^rR}_s|{^rt}_s \end{pmatrix} \in SE(2)
 $$
 
@@ -102,7 +102,7 @@ $$
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta x = \begin{pmatrix} \Delta x_r  \\ \Delta x_s \end{pmatrix} \in \mathbb{R}^7
+\Delta x = \begin{pmatrix} \Delta x_r  \\ \Delta x_s \end{pmatrix}^T \in \mathbb{R}^7
 $$
 
 Where:
@@ -110,13 +110,13 @@ Where:
 $$
 \Delta x_r = \begin{pmatrix}
 \Delta k_s \\ \Delta k_t \\ \Delta so \\ \Delta b
-\end{pmatrix} \in \mathbb{R}^4
+\end{pmatrix}^T \in \mathbb{R}^4
 $$
 
 $$
 \Delta {^rx}_s = \begin{pmatrix}
 \Delta ^rx_s \\ \Delta ^ry_s \\ \Delta ^r\theta_s
-\end{pmatrix} \in \mathbb{R}^3
+\end{pmatrix}^T \in \mathbb{R}^3
 $$
 
 * Define $\boxplus$ operator
@@ -134,7 +134,7 @@ $$
 - Domain 
 
   $$
-  \vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
+  \vec{u} = \begin{pmatrix} t_s \\\ t_t \end{pmatrix}^T \in \mathbb{R}^2
   $$
 
 Where: 
@@ -161,7 +161,7 @@ $$
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix} \in \mathbb{R}^3
+\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s\prime} \\ \Delta^sy_{s\prime} \\ \Delta {^s}\theta_{s\prime} \end{pmatrix}^T \in \mathbb{R}^3
 $$
 
 * Define $\boxminus$ operator
