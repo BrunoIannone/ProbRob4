@@ -122,11 +122,11 @@ $$
 * Define $\boxplus$ operator
 
 $$
-\mathbf{x}_r' = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
+\mathbf{x}_r^{\prime} = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
-{}^{r}X'_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
+{}^{r}X^{\prime}_s = {}^{r}X_s \boxplus \Delta {}^{r}x_s = \text{v2t}(\Delta {}^{r}x_s) \cdot {}^{r}X_s
 $$
 
 ### Controls
@@ -161,7 +161,7 @@ $$
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta {^sz}_{s'} = \begin{pmatrix} \Delta ^sx_{s'} \\ \Delta^sy_{s'} \\ \Delta {^s}\theta_{s'} \end{pmatrix} \in \mathbb{R}^3
+\Delta {^sz}_{s^{\prime}} = \begin{pmatrix} \Delta ^sx_{s'} \\ \Delta^sy_{s'} \\ \Delta {^s}\theta_{s'} \end{pmatrix} \in \mathbb{R}^3
 $$
 
 * Define $\boxminus$ operator
@@ -178,8 +178,12 @@ $$
 
 Where $\Delta ^rx_{r'}$  is the robot relative increment  by the odometry function.
 
-**Note:**   ${^rX}_s$  and ${^{r'}X}_{s'}$ represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved. 
+**Note:** 
 
+$$
+{^rX}_s = {^{r'}X}_{s'} 
+$$
+They represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved.
 
 
 * Define the error function
