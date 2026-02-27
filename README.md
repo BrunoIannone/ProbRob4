@@ -89,14 +89,14 @@ Each record in the dataset is composed of the following fields:
 * Qualify the domain
 
 $$
-\boldsymbol{x}_r = \begin{pmatrix} k_s \\ k_t \\ so \\ b \end{pmatrix} \in \mathbb{R}^4, \quad
+\boldsymbol{x}_r = \begin{pmatrix} k_s \\\\ k_t \\\\ so \\\\ b \end{pmatrix} \in \mathbb{R}^4, \quad
 {^rX}_s = \begin{pmatrix} {^rR}_s|{^rt}_s \end{pmatrix} \in SE(2)
 $$
 
 Therefore:
 
 $$
-X = \{ \boldsymbol{x}_r, {^rX}_s \} \in \mathbb{R}^4 \times SE(2)
+X = \\{ \boldsymbol{x}_r, {^rX}_s \\} \in \mathbb{R}^4 \times SE(2)
 $$
 
 * Define an Euclidean parametrization for the perturbation
