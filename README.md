@@ -122,7 +122,7 @@ $$
 * Define $\boxplus$ operator
 
 $$
-{\mathbf{x}^\prime}_r = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
+{\mathbf{x}\prime}_r = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
