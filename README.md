@@ -122,7 +122,7 @@ $$
 * Define $\boxplus$ operator
 
 $$
-\boldsymbolx}_r' = x\boldsymbol{_}r + \Delta x_r \rightarrow\text{No} \boxplus \text{because Euclidean}
+\mathbf{x}_r' = \mathbf{x}_r + \Delta x_r \rightarrow{} \text{No } \boxplus \text{ because Euclidean}
 $$
 
 $$
