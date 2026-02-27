@@ -266,7 +266,7 @@ As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cann
 
 We compute the relative pose between two absolute ones as follows:
 
-Given two poses ${^wT}_s$ , ${^wT}_s\prime$
+Given two poses ${^wT}_s$ , ${^wT}_{s\prime}$
 
 $$
 {^sT}_{s\prime} = \left({^wT}_s\right)^{-1} * {^wT}_{s\prime}
@@ -282,12 +282,35 @@ With the current setting, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is 
 
 Moreover, we assume $\Omega = I$.
 
-From this, we proceed using the well known loop ensuring that:
+From this, we proceed using the well known loop:
 
-* $H$ is invertible by adding a small value to it before computing $\Delta x$:
+* We ensure that $H$ is invertible by adding a small value to it before computing $\Delta x$:
 
 $$
 H = H+ I_{7\times7} \cdot 0.001
 $$
 
-* If no motion occurred, we do nothing
+* If no robot motion occurred, we do nothing
+* The Jacobian is numerical.
+
+The main loop is in calibrate() which calls the errorAndJacobian() function to compute the error and the numerical Jacobian.
+
+## Results
+
+After two iteration, this is the final result
+
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation.png)
+
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi.png)
+
+As we can see, although not perfectly overlapping, now the sensor odometry shape is very similar to the ground truth, with a chi value starting from 0.7 and decreasing to 0.3 after one iteration. It is interesting to notice how the chi values change when we run the least square iteration also when the robot is not moving:
+
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi_bad.png)
+
+Even if it is able to find a valid solution, we understand why is it better to do nothing when the robot does not move.
+
+### Animation 
+
+
+
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/live.gif)
