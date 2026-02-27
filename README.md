@@ -134,14 +134,13 @@ $$
 - Domain 
 
   $$
-  \boldsymbol{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
+  \mathbf{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix} \in \mathbb{R}^2
   $$
 
 Where: 
 
-        - Absolute encoder $\rightarrow{}$ Steering ticks: $t_s$
-
-        - Incremental encoder $\rightarrow{}$ Traction ticks: $t_t$
+- **Absolute encoder** $\rightarrow$ Steering ticks: $t_s$
+- **Incremental encoder** $\rightarrow$ Traction ticks: $t_t$
 
 ### Measurements
 
@@ -174,13 +173,14 @@ $$
 * Identify prediction function
 
 $$
-h^{[s,s']}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^rx_{r'}\right)\cdot {^{r'}X}_{s'}= {^sX}_{s'}
- 
+h^{[s,s']}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^rx_{r'}\right) \cdot {^{r'}X}_{s'} = {^sX}_{s'}
 $$
 
 Where $\Delta ^rx_{r'}$  is the robot relative increment  by the odometry function.
 
-**Note:**	${^rX}_s$  and ${^{r'}X}_{s'}$ represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved. 
+**Note:**   ${^rX}_s$  and ${^{r'}X}_{s'}$ represent the same relative pose, but the latter expresses the sensor relative pose in the new frame after the robot moved. 
+
+
 
 * Define the error function
 
