@@ -102,7 +102,7 @@ $$
 * Define an Euclidean parametrization for the perturbation
 
 $$
-\Delta \vec{x} = \begin{pmatrix} \Delta \vec{x}_r  \\ \Delta \vec{x}_s \end{pmatrix}^T \in \mathbb{R}^7
+\Delta \vec{x} = \begin{pmatrix} \Delta \vec{x}_r  \\ \Delta {^r\vec{x}}_s \end{pmatrix}^T \in \mathbb{R}^7
 $$
 
 Where:
@@ -146,13 +146,13 @@ Where:
 
 * Qualify the domain
 
-An external system provide the pose of the sensor in the world, namely
+An external system provides the pose of the sensor in the world, namely
 
 $$
 {^w}Z_s = \begin{pmatrix} {^wR}_s | {^w\vec{t}}_s\end{pmatrix} \in SE(2)
 $$
 
-However, out of these we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . Therefore:
+However, out of these, we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . Therefore:
 
 $$
 ^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^s\vec{t}}_{s\prime}\end{pmatrix} \in SE(2)
@@ -176,7 +176,7 @@ $$
 h^{[s,s\prime]}(X) = {^sX}_r \cdot \text{v2t}\left(\Delta ^r\vec{x}_{r\prime}\right) \cdot {^{r\prime}X}_{s\prime} = {^sX}_{s\prime}
 $$
 
-Where $\Delta ^r\vec{x}_{r\prime}$  is the robot relative increment  by the odometry function.
+Where $\Delta ^r\vec{x}_{r\prime}$  is the robot relative increment computed by the odometry function.
 
 **Note:** 
 
@@ -192,7 +192,7 @@ $$
 e^{[s,s\prime]}(X) = \text{h}^{[s,s\prime]}(X) \boxminus {^{s}Z}_{s\prime} = \text{t2v}\left [ \left({^{s}Z}_{s\prime} \right)^{-1} \cdot {^sX}_{s\prime} \right]
 $$
 
-### Bicycle model 
+## Bicycle model 
 
 The front-tractor tricycle model is equivalent to the front-wheel drive bicycle one. Hence:
 
@@ -278,7 +278,7 @@ This operation is carried on by the compute_increments() function.
 
 #### Least squares
 
-With the current setting, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 1\times7$ vector, the Jacobian $J$ is a $3\times7$ matrix.
+With the current settings, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 1\times7$ vector, the Jacobian $J$ is a $3\times7$ matrix.
 
 Moreover, we assume $\Omega = I$.
 
@@ -335,3 +335,12 @@ Even if it is able to find a valid solution, we understand why it is better to d
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/live.gif)
 
 Figure 6: Animation of the calibration evolution per iteration
+
+
+
+## How to run
+
+To run the project
+
+`octave LSOdomCalib.m`
+
