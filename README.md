@@ -280,7 +280,7 @@ This operation is carried on by the compute_increments() function.
 
 #### Least squares
 
-With the current settings, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 1\times7$ vector, the Jacobian $J$ is a $3\times7$ matrix.
+With the current settings, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 7\times1$ vector, the Jacobian $J$ is a $3\times7$ matrix.
 
 Moreover, we assume $\Omega = I$.
 
