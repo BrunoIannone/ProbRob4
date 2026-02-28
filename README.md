@@ -220,9 +220,9 @@ Since we are providing relative increments, $\theta = 0$. Therefore, we can furt
 
 $$
 \begin{aligned}
-\Delta x &= \cos(\phi)\, ds \\
+\Delta x &= \cos(\phi)\cdot ds \\
 \Delta y &= 0 \\
-\Delta \theta &= \frac{\sin(\phi)}{l}\, ds
+\Delta \theta &= \frac{\sin(\phi)}{l} \cdot ds
 \end{aligned}
 $$
 
