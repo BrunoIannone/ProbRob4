@@ -198,9 +198,9 @@ The front-tractor tricycle model is equivalent to the front-wheel drive bicycle 
 
 $$
 \begin{aligned}
-\Delta x &= \cos(\theta)\cos(\phi)\, ds \\
-\Delta y &= \sin(\theta)\cos(\phi) \\
-\Delta \theta &= \frac{\sin(\phi)}{l}\, ds
+\Delta x &= \cos(\theta)\cos(\phi) \cdot ds \\
+\Delta y &= \sin(\theta)\cos(\phi)\cdot ds \\
+\Delta \theta &= \frac{\sin(\phi)}{l}\ \cdot ds
 \end{aligned}
 $$
 
@@ -225,6 +225,8 @@ $$
 \Delta \theta &= \frac{\sin(\phi)}{l}\, ds
 \end{aligned}
 $$
+
+Increments are computed in h_odom() function.
 
 To validate our choices, we can compare the model pose in the dataset and the one resulting from our model
 
@@ -266,10 +268,10 @@ As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cann
 
 We compute the relative pose between two absolute ones as follows:
 
-Given two poses ${^wT}_s$ , ${^wT}_{s\prime}$
+Given two poses
 
 $$
-{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} \cdot {^wT}_{s\prime}
+{^wT}_s,{^wT}_{s\prime}\rightarrow{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} \cdot {^wT}_{s\prime}
 $$
 
 We do this for each pose in the dataset.
@@ -284,7 +286,7 @@ Moreover, we assume $\Omega = I$.
 
 From this, we proceed using the well known loop:
 
-* We ensure that $H$ is invertible by adding a small value to it before computing $\Delta \vec{x}$:
+* We ensure that $H$ is invertible by adding a small damping value to it before computing $\Delta \vec{x}$:
 
 $$
 H = H+ I_{7\times7} \cdot 0.001
@@ -322,7 +324,7 @@ From Figure 4 we can observe that the chi value starts from 0.7 and decreases to
     - y: 0.2917
     - θ: -0.031365
 
-Moreover, It is interesting to show how the chi values change when we run the least square iteration also when the robot is not moving:
+Moreover, It is interesting to show how the chi values change when we run the least square iteration when the robot is not moving:
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi_bad.png)
 
@@ -336,11 +338,8 @@ Even if it is able to find a valid solution, we understand why it is better to d
 
 Figure 6: Animation of the calibration evolution per iteration
 
-
-
 ## How to run
 
 To run the project
 
 `octave LSOdomCalib.m`
-
