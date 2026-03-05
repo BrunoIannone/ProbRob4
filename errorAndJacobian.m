@@ -1,13 +1,6 @@
-function [e, J, status] = errorAndJacobian(x, Z, encoder_max_values)
+function [e, J] = errorAndJacobian(x, Z, encoder_max_values,pred)
     ticks = Z(1:2);
     sensor_meas = Z(3:5);
-    status = 0;
-    pred = get_prediction(x, ticks, encoder_max_values);
-
-    if pred == -1%No motion occurred
-        status = -1;
-        return;
-    endif
 
     e = t2v(inv(v2t(sensor_meas)) * pred);
 

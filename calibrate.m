@@ -24,12 +24,14 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
         chi = 0;
 
         for (i = 1:nmeas)
+            
+            pred = get_prediction(x_new, Z(i,1:2), encoder_max_values);
 
-            [e, J, status] = errorAndJacobian(x_new, Z(i, :), encoder_max_values);
-
-            if (status == -1)
-                continue
+            if pred == -1 %No motion occurred
+                continue;
             endif
+
+            [e, J] = errorAndJacobian(x_new, Z(i, :), encoder_max_values,pred);
 
             chi += e' * e;
 
