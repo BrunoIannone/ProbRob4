@@ -1,7 +1,7 @@
 function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,damping, plot_, live_plot)
 
     if plot_
-        calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(x(1:4), [Z(:, 1), Z(:, 2)], encoder_max_values), -x(5:7));
+        calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(x(1:4), [Z(:, 1), Z(:, 2)], encoder_max_values), t2v(inv(v2t(x))));
 
         calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry, x(5:7));
 
@@ -48,7 +48,7 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
 
         if plot_
 
-            calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(x_new(1:4), [Z(:, 1), Z(:, 2)], encoder_max_values), -x_new(5:7));
+            calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(x_new(1:4), [Z(:, 1), Z(:, 2)], encoder_max_values), t2v(inv(v2t(x_new(5:7)))));
 
             calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry, x_new(5:7));
 

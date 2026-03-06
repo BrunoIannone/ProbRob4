@@ -5,7 +5,6 @@ more off;
 
 #import 2d geometry utils
 source "./tools/utilities/geometry_helpers_2d.m"
-source "./tools/utilities/J_numeric.m"
 
 #### Flags ####
 plot_ = true;
@@ -30,7 +29,7 @@ MAX_INCREMENTAL_VARIABLE = 2^32;
 NOMINAL_PARAMS = [0.1 0.0106141 0 1.4];
 SENSOR_TRANSLATION_WRT_ROBOT = [1.5, 0, 0];
 DAMPING = 0.001;
-N_ITERATIONS = 2;
+N_ITERATIONS = 10;
 ################################
 
 if (plot_)% Init figures
@@ -42,9 +41,9 @@ if (plot_)% Init figures
     live_plot = init_figure(5, 'Live calibration', 'World x', 'World y');
 endif
 
-incremental_values_rel = compute_relative_ticks([incremental_values(1); incremental_values], MAX_INCREMENTAL_VARIABLE);
+incremental_values_rel = compute_relative_ticks( incremental_values, MAX_INCREMENTAL_VARIABLE);
 
-my_robot_odometry = compute_odometry_trajectory(stack_odometry(NOMINAL_PARAMS, [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES));
+my_robot_odometry = compute_odometry_trajectory(stack_odometry(NOMINAL_PARAMS, [absolute_values(1:end-1,:), incremental_values_rel], ENCODER_MAX_VALUES));
 
 if (plot_)%Robot odometry validation
 
@@ -57,7 +56,7 @@ endif
 
 my_sensor_odometry = compute_sensor_odometry(my_robot_odometry, SENSOR_TRANSLATION_WRT_ROBOT);
 
-if (plot_)%Sensor validation
+if (plot_) % Sensor validation
 
     h3 = my_plot(sensor_gt_values, sensor_odometry_plot, linewidth = 2, 'r-');
 
@@ -74,16 +73,15 @@ if (plot_)
 
 endif
 
-sensor_gt_rel = compute_increments([[0, 0, 0]; sensor_gt_values]); % Anchor to 0 or it won't be correct
-
-calibrated_my_sensor_gt_odometry = compute_odometry_trajectory(sensor_gt_rel);
-%my_plot(calibrated_my_sensor_gt_odometry, calibrated_sensor_odometry_plot, 1, 'k-'); % Uncomment to validate compute increments
+sensor_gt_rel = compute_increments(sensor_gt_values);
+% calibrated_my_sensor_gt_odometry = compute_odometry_trajectory(sensor_gt_rel);% Uncomment to validate compute increments
+% my_plot(calibrated_my_sensor_gt_odometry, calibrated_sensor_odometry_plot, 1, 'k-'); % Uncomment to validate compute increments
 
 % Compute the calibration parameters
+pause;
+[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values(1:end-1,:), incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES,DAMPING, plot_, live_plot);
 
-[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values, incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES,DAMPING, plot_, live_plot);
-
-calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(X(1:4), [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES), t2v(inv(v2t(X(5:7)))));
+calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(X(1:4), [absolute_values(1:end-1,:), incremental_values_rel], ENCODER_MAX_VALUES), t2v(inv(v2t(X(5:7)))));
 
 calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry, X(5:7));
 
@@ -96,6 +94,10 @@ if plot_
     h7 = my_plot([[1:N_ITERATIONS]',chi'], chi_plot, 2, 'k-');
 
 endif
+    % tmp = init_figure(6, 'Live calibration', 'World x', 'World y');
+    % plot(calibrated_my_sensor_odometry(:,3))
+    % plot(sensor_gt_values(:,3))
+
 
 if (plot_)
     disp("Press anything to exit");
