@@ -134,7 +134,7 @@ $$
 - Domain 
 
 $$
-\vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix}^T \in \mathbb{N}
+\vec{u} = \begin{pmatrix} t_s \\ t_t \end{pmatrix}^T \in \mathbb{N}^2
 $$
 
 Where: 

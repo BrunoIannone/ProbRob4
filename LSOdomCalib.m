@@ -38,7 +38,6 @@ if (plot_)% Init figures
     sensor_odometry_plot = init_figure(2, 'Sensor Odometry', 'World x', 'World y');
     calibrated_sensor_odometry_plot = init_figure(3, 'Calibrated sensor Odometry', 'World x', 'World y');
     chi_plot = init_figure(4, 'Chi evolution', 'Iteration', 'Chi value y');
-    live_plot = init_figure(5, 'Live calibration', 'World x', 'World y');
 endif
 
 incremental_values_rel = compute_relative_ticks( incremental_values, MAX_INCREMENTAL_VARIABLE);
@@ -78,8 +77,7 @@ sensor_gt_rel = compute_increments(sensor_gt_values);
 % my_plot(calibrated_my_sensor_gt_odometry, calibrated_sensor_odometry_plot, 1, 'k-'); % Uncomment to validate compute increments
 
 % Compute the calibration parameters
-pause;
-[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values(1:end-1,:), incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES,DAMPING, plot_, live_plot);
+[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values(1:end-1,:), incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES,DAMPING, plot_);
 
 calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(X(1:4), [absolute_values(1:end-1,:), incremental_values_rel], ENCODER_MAX_VALUES), t2v(inv(v2t(X(5:7)))));
 
