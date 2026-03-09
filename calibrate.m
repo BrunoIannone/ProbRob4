@@ -1,5 +1,5 @@
-function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values, damping, plot_)
-
+function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values, damping, plot_, save_gif = false)
+    %shoutout to https://electroagenda.com/en/create-gif-files-in-octave-and-matlab/ for the gif creation code
     if plot_
         live_plot = init_figure(5, 'Live calibration', 'World x', 'World y');
 
@@ -15,6 +15,24 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
         h_param_fig = init_figure(6, 'Live parameter evolution', 'iteration', 'value');
         x_record(:, 1) = x;
         plot_param_evolution(h_param_fig, x_record, 0, 0, 0);
+
+        if (save_gif)
+
+            % Assign plot to a frame
+            frame = getframe(live_plot);
+            % Convert frame to RGB image (3 dimensional)
+            im = frame2im(frame);
+            % Transform RGB samples to 1 dimension with a color map "cm".
+            [imind, cm] = rgb2ind(im);
+            imwrite(imind, cm, './images/live.gif', 'gif', 'DelayTime', 1, 'Compression', 'lzw');
+
+            frame = getframe(h_param_fig);
+            im = frame2im(frame);
+            [imind, cm] = rgb2ind(im);
+            imwrite(imind, cm, './images/param.gif', 'gif', 'DelayTime', 1, 'Compression', 'lzw');
+
+        endif
+
     endif
 
     #### LS LOOP ####
@@ -45,7 +63,7 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
 
         H += eye(7) * damping;
         dx = -H \ b;
-        x_new = boxplus(x_new, dx');
+        x_new = boxplus(x_new, dx')
         ##############################
 
         x_record(:, j + 1) = x_new;
@@ -58,8 +76,21 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
             set(h7, 'XData', calibrated_my_robot_odometry(:, 1), 'YData', calibrated_my_robot_odometry(:, 2));
             set(h8, 'XData', calibrated_my_sensor_odometry(:, 1), 'YData', calibrated_my_sensor_odometry(:, 2));
             drawnow;
-
             plot_param_evolution(h_param_fig, x_record, chi_record, dx, j);
+
+            if (save_gif)
+
+                frame = getframe(live_plot);
+                im = frame2im(frame);
+                [imind, cm] = rgb2ind(im);
+                imwrite(imind, cm, './images/live.gif', 'gif', 'WriteMode', 'append', 'DelayTime', 1, 'Compression', 'lzw');
+
+                frame = getframe(h_param_fig);
+                im = frame2im(frame);
+                [imind, cm] = rgb2ind(im);
+                imwrite(imind, cm, './images/param.gif', 'gif', 'WriteMode', 'append', 'DelayTime', 1, 'Compression', 'lzw');
+            endif
+
         endif
 
     endfor
