@@ -1,4 +1,4 @@
-function [skip_indices] = compute_skip_indices(time_values,threshold=0.3)
+function [skip_indices] = compute_skip_indices(time_values, threshold = 0.3)
 
     size_ = size(time_values, 1);
 
@@ -15,7 +15,7 @@ function [skip_indices] = compute_skip_indices(time_values,threshold=0.3)
             continue;
         else
             skip_indices = [skip_indices; i];
-            
+
         endif
 
     endfor

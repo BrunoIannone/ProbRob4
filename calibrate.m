@@ -30,7 +30,7 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
         chi = 0;
 
         for (i = 1:nmeas)
-            pred = get_prediction(x_new, Z(i,1:2), encoder_max_values);
+            pred = get_prediction(x_new, Z(i, 1:2), encoder_max_values);
 
             if pred == -1
                 continue;
@@ -48,7 +48,7 @@ function [x_new, chi_record] = calibrate(x, Z, n_iterations, encoder_max_values,
         x_new = boxplus(x_new, dx');
         ##############################
 
-        x_record(:, j+1) = x_new;
+        x_record(:, j + 1) = x_new;
         chi_record(j) = chi;
 
         if plot_

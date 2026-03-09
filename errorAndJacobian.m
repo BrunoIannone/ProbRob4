@@ -1,4 +1,4 @@
-function [e, J] = errorAndJacobian(x, Z, encoder_max_values,pred)
+function [e, J] = errorAndJacobian(x, Z, encoder_max_values, pred)
     ticks = Z(1:2);
     sensor_meas = Z(3:5);
 

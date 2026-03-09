@@ -29,8 +29,8 @@ MAX_INCREMENTAL_VARIABLE = 2^32;
 
 NOMINAL_PARAMS = [0.1 0.0106141 0 1.4];
 SENSOR_TRANSLATION_WRT_ROBOT = [1.5, 0, 0];
-DAMPING = 1.7;
-N_ITERATIONS = 18;
+DAMPING = 1.5;
+N_ITERATIONS = 20;
 ################################
 
 if (plot_)% Init figures
