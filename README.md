@@ -254,10 +254,10 @@ The absolute encoder ticks can be used as they are. On the other hand, increment
 
 In order to have a valid value, we need to compute the difference between two consecutive motions. 
 
-Namely, ticks at step $k$ are computed as:
+Namely, ticks at step $n$ are computed as:
 
 $$
-t_k = t_{k+1} - t_{k-1} \quad k = 1,2,...,T
+\Delta_n = t_{k+1} - t_{k} \quad k,n = 1,2,...,T-1
 $$
 
 In the previous formula, we omit the wraparound handling for brevity. The full implementation is in compute_relative_ticks() function.
@@ -278,65 +278,78 @@ We do this for each pose in the dataset.
 
 This operation is carried on by the compute_increments() function.
 
-#### Least squares
+#### Sampling
 
-With the current settings, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 7\times1$ vector, the Jacobian $J$ is a $3\times7$ matrix.
+Analyzing the dataset we can notice two things:
+
+* Subsequent sensor readings occur at about 0.04s (40ms), hence they are too close to appreciate the robot movement. \
+  This causes an insufficient state variable excitation, making them unobservable with the result of a singular H matrix. 
+* Plotting the tracker pose, we notice that it is noisy.
+
+We tackle the previous problems by sampling the dataset. We take advance of the timestamp information. Namely, we keep samples that are atleast 0.3s apart. This shrinks the dataset from 2434 samples to 354. It is important to look for a threshold that keeps the sampled trajectory as close as possible to the original. 
+![Tracker pose original and sampled comparison](./images/noisy_tracker_pose.png)
+![Tracker pose original and sampled comparison](./images/sampled_tracker_pose.png)
+
+*Figure 3: Comparison of sensor's tracked trajectory (left) against sampled sensor's tracked trajectory (right).*
+
+Althought we discard the 86% of the measurements, we can observe from Figure 3 that the sampled version is still very faithful to the original one, but more informative. 
+
+The selection of the measurements to skip is computed by compute_skip_indices(). Next, the actual sampling by skip_measurements().
+
+### Least squares
+
+In the current setting, $H \text{ is a } 7\times7$ matrix, $\vec{b} \text{ is a } 7\times1$ vector, the Jacobian $J$ is a $3\times7$ matrix.
 
 Moreover, we assume $\Omega = I$.
 
 From this, we proceed using the well known loop:
 
-* We ensure that $H$ is invertible by adding a small damping value to it before computing $\Delta \vec{x}$:
+* We ensure that $H$ is invertible by adding a damping value to it before computing $\Delta \vec{x}$
 
 $$
-H = H+ I_{7\times7} \cdot 0.001
+H = H+ I_{7\times7} \cdot 1.5
 $$
 
-* If no robot motion occurred, we do nothing
+* If no robot motion occurred $\left(\Delta_t = 0\right)$, we do nothing;
 * The Jacobian is numerical.
 
 The main loop is in calibrate() which calls the errorAndJacobian() function to compute the error and the numerical Jacobian.
 
 ## Results
 
-After two iteration, this is the final result
+After 20 iterations, this is the final result
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation.png)
 
-Figure 3: Comparison of  sensor's tracked pose (red) against the calibrated sensor odometry (green).
+Figure 4: Comparison of  sensor's tracked pose (red) against the calibrated sensor odometry (green).
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi.png)
 
-Figure 4: Chi evolution per iteration.
+Figure 5: Chi evolution per iteration closeup .
 
-As we can see from Figure 3, although not perfectly overlapping, now the sensor odometry shape is very similar to the ground truth.
+As we can see from Figure 4, although not perfectly overlapping, now the sensor odometry shape is very similar to the ground truth.
 
-From Figure 4 we can observe that the chi value starts from 0.7 and decreases to 0.3 after one iteration. 
+From Figure 5 we can observe that the chi value starts from 3.4 and decreases until 0.15. 
 
 **The optimization finds the following values:**
 
-- **Ks**: 0.60209
-- **kt**: 0.0086483
-- **so**: -0.099539
-- **b**: 1.3218
+- **Ks**: $0.55335$
+- **kt**: $0.010386$
+- **so**: $-0.051422$
+- **b**: $1.4642$
 - **2D sensor pose**:
-    - x: 1.6153
-    - y: 0.2917
-    - θ: -0.031365
-
-Moreover, It is interesting to show how the chi values change when we run the least square iteration when the robot is not moving:
-
-![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi_bad.png)
-
-Figure 5: Chi value per iteration computed over all measurements.
-
-Even if it is able to find a valid solution, we understand why it is better to do nothing when the robot does not move.
+    - x: $1.7739$
+    - y: $-0.038504$
+    - θ: $-0.0060177$
 
 ### Animation 
 
-![Robot odometry validation: comparison of our model vs. given robot pose](./images/live.gif)
+![Robot odometry validation: comparison of our model vs. given robot pose3](./images/live.gif)
 
-Figure 6: Animation of the calibration evolution per iteration
+
+![Robot odometry validation: comparison of our model vs. given robot pose2](./images/param.gif)
+
+Figure 6: Animation of the calibration (left) and parameters (right) evolution per iteration.
 
 ## How to run
 
