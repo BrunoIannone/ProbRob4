@@ -2,7 +2,6 @@ function [skipped_data] = skip_measurements(data, skip_indices)
 
     if (size(skip_indices, 1)) == 0
         skipped_data = data;
-        disp("return")
         return;
     endif
 

@@ -28,7 +28,7 @@ function [] = plot_param_evolution(fig, x_record, chi_record, dx, j)
 
     else
 
-        for k = 1:7
+        for k = 1:7 %State
             sub = subplot(3, 3, k);
             h = findobj(sub, 'Type', 'line'); % find existing plot in subplot sub
 
@@ -40,7 +40,7 @@ function [] = plot_param_evolution(fig, x_record, chi_record, dx, j)
 
         % Chi
         sub = subplot(3, 3, 8);
-        h = findobj(sub, 'Type', 'line'); % find existing plot in subplot sub
+        h = findobj(sub, 'Type', 'line');
 
         set(h, 'XData', 1:j, 'YData', chi_record(1:j));
         title('Total Error (Chi)');

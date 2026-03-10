@@ -10,14 +10,14 @@ The **output** should be:
 
 ### 1. Sensor Position
 
-- **2D position of the sensor** with respect to the **base link**
+- **2D position of the sensor** with respect to the **base link**.
 
 ### 2. Kinematic Parameters
 
-- **`ksteer`**: radians per tick (of the steering encoder)
-- **`ktraction`**: meters per tick (of the traction encoder)
-- **`steer_offset`**: steering angle corresponding to zero wheel position
-- **`base_line`**: length of the baseline. **Remember that the kinematic center is in the middle of the axis of the rear wheels**
+- **`ksteer`**: radians per tick (of the steering encoder);
+- **`ktraction`**: meters per tick (of the traction encoder);
+- **`steer_offset`**: steering angle corresponding to zero wheel position;
+- **`base_line`**: length of the baseline. **Remember that the kinematic center is in the middle of the axis of the rear wheels**.
 
 ---
 
@@ -25,18 +25,18 @@ The **output** should be:
 
 ### `dataset.txt`
 
-The first 10 lines contain:
+The first 8 lines contain:
 
-- **Kinematic model**: traction_drive_wheel (front-tractor tricycle)
-- **Kinematic parameters to be estimated**
-- **Initial guesses** for the parameters
-- **Encoder type** 
-- **Encoder maximum ranges**
-- **Laser w.r.t. base link transform** 
+- **Kinematic model**: traction_drive_wheel (front-tractor tricycle);
+- **Kinematic parameters to be estimated**;
+- **Initial guesses** for the parameters;
+- **Encoder types**;
+- **Encoder maximum ranges**;
+- **Laser w.r.t. base link transform**. 
 
 > [!IMPORTANT]
 >
-> The encoder type and ranges are critical for correctly interpreting the encoder tick data.
+> The encoder types and ranges are critical for correctly interpreting the encoder tick data.
 
 ---
 
@@ -46,17 +46,17 @@ Each record in the dataset is composed of the following fields:
 
 ### 1. Time
 
-- **`time`**: Timestamp of the measurement
+- **`time`**: Timestamp of the measurement.
 
 ### 2. Encoder Ticks
 
 - **`ticks`**: Encoder readings
-    - **Steering encoder**: absolute encoder
-    - **Traction encoder**: incremental encoder
+    - **Steering encoder**: absolute encoder;
+    - **Traction encoder**: incremental encoder.
 
 ### 3. Model Pose
 
-- **`model pose`**: Odometry computed using the kinematic model
+- **`model pose`**: Odometry computed using the kinematic model.
 
 > [!NOTE]
 >
@@ -66,7 +66,7 @@ Each record in the dataset is composed of the following fields:
 
 ### 4. Tracker Pose
 
-- **`tracker pose`**: Position of the sensor obtained from an external odometry/tracking system
+- **`tracker pose`**: Position of the sensor obtained from an external odometry/tracking system.
 
 ---
 
@@ -148,13 +148,13 @@ Where:
 
 * Qualify the domain
 
-An external system provides the pose of the sensor in the world, namely
+An external system provides the poses of the sensor in the world, namely
 
 $$
 {^w}Z_s = \begin{pmatrix} {^wR}_s | {^w\vec{t}}_s\end{pmatrix} \in SE(2)
 $$
 
-However, out of these, we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . Therefore:
+However, out of these, we will compute the relative motion of the sensor between pose $s$ and $s\prime$ . That is:
 
 $$
 ^{s}Z_{s\prime} = \begin{pmatrix} {^sR}_{s\prime} | {^s\vec{t}}_{s\prime}\end{pmatrix} \in SE(2)
@@ -216,7 +216,7 @@ $$
 ds = k_t \cdot \frac{t_t}{\text{max}_t}
 $$
 
-**Note:**  $max_t$ and $max_s$ are the maximum encoder value for traction and steering encoders.
+**Note:**  $max_t$ and $max_s$ are the maximum encoder values for traction and steering encoders.
 
 Since we are providing relative increments, $\theta = 0$. Therefore, we can further simplify the model as follows:
 
@@ -238,11 +238,11 @@ To validate our choices, we can compare the model pose in the dataset and the on
 
 As we can see, they overlap almost perfectly.
 
-Let us now put side to side the sensor trajectory given by the tracker with the sensor odometry:
+Let us now put side by side the sensor trajectory given by the tracker with the sensor odometry:
 
 ![Sensor odometry validation: comparison of sensor odometry vs. tracker gt](./images/sensor_odometry_vs_gt_validation.png)
 
-*Figure 2: Comparison of  sensor tracked trajectory (red) against sensor odometry (green).*
+*Figure 2: Comparison of sensor tracked trajectory (red) against sensor odometry (green).*
 
 ## Solution
 
@@ -270,10 +270,8 @@ As seen also for Graph-SLAM, we need to work with relative poses. Hence, we cann
 
 We compute the relative pose between two absolute ones as follows:
 
-Given two poses
-
 $$
-{^wT}_s,{^wT}_{s\prime}\rightarrow{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} \cdot {^wT}_{s\prime}
+\text{Given two poses }{^wT}_s,{^wT}_{s\prime}\rightarrow{^sT}_{s\prime} = \left({^wT}_s\right)^{-1} \cdot {^wT}_{s\prime}
 $$
 
 We do this for each pose in the dataset.
@@ -289,12 +287,13 @@ Analyzing the dataset we can notice two things:
 * Plotting the tracker pose, we notice that it is noisy.
 
 We tackle the previous problems by sampling the dataset. We take advance of the timestamp information. Namely, we keep samples that are atleast $0.3s$ apart. This shrinks the dataset from $2434$ samples to $354$. It is important to look for a threshold that keeps the sampled trajectory as close as possible to the original. 
+
 ![Tracker pose original and sampled comparison](./images/noisy_tracker_pose.png)
 ![Tracker pose original and sampled comparison](./images/sampled_tracker_pose.png)
 
-*Figure 3: Comparison of sensor's tracked trajectory (left) against sampled sensor's tracked trajectory (right).*
+*Figure 3: Comparison of sensor tracked trajectory (top) against the sampled one (bottom).*
 
-Althought we discard the 86% of the measurements, we can observe from Figure 3 that the sampled version is still very faithful to the original one, but more informative. 
+Although we discard the 86% of the measurements, we can observe from Figure 3 that the sampled version is still very faithful to the original one, but more informative. 
 
 The selection of the measurements to skip is computed by compute_skip_indices(). The actual sampling by skip_measurements().
 
@@ -323,7 +322,7 @@ After 20 iterations, this is the final result
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation.png)
 
-Figure 4: Comparison of  sampled sensor's tracked pose (red) against the calibrated sensor odometry (green).
+Figure 4: Comparison of sampled sensor tracked pose (red) against the calibrated sensor odometry (green).
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi.png)
 
@@ -350,7 +349,7 @@ From Figure 5 we can observe that the chi value starts from 3.4 and decreases un
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/param.gif)
 
-Figure 6: Animation of the calibration (left) and parameters (right) evolution per iteration.
+Figure 6: Animation of the calibration (top) and parameters (bottom) evolution per iteration.
 
 ## How to run
 
