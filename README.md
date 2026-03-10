@@ -1,5 +1,7 @@
 # Calibration of a (real) Robot
 
+Project for the _Probabilistic Robotics_ course at _Sapienza Università di Roma_.
+
 ## Task Overview
 
 The dataset contains data collected from the sensors of a **real mobile robot**. Namely, a **front-tractor tricycle**.
@@ -236,11 +238,11 @@ To validate our choices, we can compare the model pose in the dataset and the on
 
 As we can see, they overlap almost perfectly.
 
-Let us now put side to side the sensor's trajectory given by the tracker with the odometry:
+Let us now put side to side the sensor trajectory given by the tracker with the sensor odometry:
 
 ![Sensor odometry validation: comparison of sensor odometry vs. tracker gt](./images/sensor_odometry_vs_gt_validation.png)
 
-*Figure 2: Comparison of  sensor's tracked trajectory (red) against sensor odometry (green).*
+*Figure 2: Comparison of  sensor tracked trajectory (red) against sensor odometry (green).*
 
 ## Solution
 
@@ -283,7 +285,7 @@ This operation is carried on by the compute_increments() function.
 Analyzing the dataset we can notice two things:
 
 * Subsequent sensor readings occur at about $0.04s$ $(40ms)$, hence they are too close to appreciate the robot movement. \
-  This causes an insufficient state variables excitation, making them unobservable with the result of a singular $H$ matrix. 
+  This causes an insufficient state variables excitation that makes them unobservable, with the consequence of a singular $H$ matrix; 
 * Plotting the tracker pose, we notice that it is noisy.
 
 We tackle the previous problems by sampling the dataset. We take advance of the timestamp information. Namely, we keep samples that are atleast $0.3s$ apart. This shrinks the dataset from $2434$ samples to $354$. It is important to look for a threshold that keeps the sampled trajectory as close as possible to the original. 
@@ -355,3 +357,18 @@ Figure 6: Animation of the calibration (left) and parameters (right) evolution p
 To run the project
 
 `octave LSOdomCalib.m`
+
+## Credits
+
+### Author
+
+* Bruno Iannone
+
+### Professor
+
+* Giorgio Grisetti
+
+### TAs (alphabetic order)
+
+* Davide Ceriola
+* Lorenzo De Rebotti
