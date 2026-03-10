@@ -8,6 +8,8 @@ source "./tools/utilities/geometry_helpers_2d.m"
 
 #### Flags ####
 plot_ = true;
+save_gif = false;
+threshold = 0.3;
 ############
 
 #### Load data matrix ####
@@ -41,7 +43,7 @@ if (plot_)% Init figures
     chi_plot = init_figure(4, 'Chi evolution', 'Iteration', 'Chi value y');
 endif
 
-skip_indices = compute_skip_indices(time_values);
+skip_indices = compute_skip_indices(time_values, threshold);
 
 incremental_values = skip_measurements(incremental_values, skip_indices);
 incremental_values_rel = compute_relative_ticks(incremental_values, MAX_INCREMENTAL_VARIABLE);
@@ -87,7 +89,7 @@ sensor_gt_rel = compute_increments(sensor_gt_values);
 % my_plot(calibrated_my_sensor_gt_odometry, calibrated_sensor_odometry_plot, 1, 'k-'); % Uncomment to validate compute increments
 
 % Compute the calibration parameters
-[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values, incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES, DAMPING, plot_);
+[X, chi] = calibrate([NOMINAL_PARAMS, SENSOR_TRANSLATION_WRT_ROBOT], [absolute_values, incremental_values_rel, sensor_gt_rel], N_ITERATIONS, ENCODER_MAX_VALUES, DAMPING, plot_, save_gif);
 
 calibrated_my_robot_odometry = compute_odometry_trajectory(stack_odometry(X(1:4), [absolute_values, incremental_values_rel], ENCODER_MAX_VALUES), t2v(inv(v2t(X(5:7)))));
 calibrated_my_sensor_odometry = compute_sensor_odometry(calibrated_my_robot_odometry, X(5:7));
@@ -96,7 +98,7 @@ if plot_
 
     %h5 = my_plot(sensor_gt_values, calibrated_sensor_odometry_plot, 5, 'r-');
     h6 = my_plot(calibrated_my_sensor_odometry, calibrated_sensor_odometry_plot, 2, 'g-');
-    legend([h5 h6], {'Sensor GT', "My sensor odometry"});
+    legend([h5 h6], {'Sensor GT', "My sensor odometry"}, 'Location', 'northwest');
 
     h7 = my_plot([[1:N_ITERATIONS]',chi'], chi_plot, 2, 'k-');
 

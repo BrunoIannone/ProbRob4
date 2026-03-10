@@ -282,11 +282,11 @@ This operation is carried on by the compute_increments() function.
 
 Analyzing the dataset we can notice two things:
 
-* Subsequent sensor readings occur at about 0.04s (40ms), hence they are too close to appreciate the robot movement. \
-  This causes an insufficient state variable excitation, making them unobservable with the result of a singular H matrix. 
+* Subsequent sensor readings occur at about $0.04s$ $(40ms)$, hence they are too close to appreciate the robot movement. \
+  This causes an insufficient state variables excitation, making them unobservable with the result of a singular $H$ matrix. 
 * Plotting the tracker pose, we notice that it is noisy.
 
-We tackle the previous problems by sampling the dataset. We take advance of the timestamp information. Namely, we keep samples that are atleast 0.3s apart. This shrinks the dataset from 2434 samples to 354. It is important to look for a threshold that keeps the sampled trajectory as close as possible to the original. 
+We tackle the previous problems by sampling the dataset. We take advance of the timestamp information. Namely, we keep samples that are atleast $0.3s$ apart. This shrinks the dataset from $2434$ samples to $354$. It is important to look for a threshold that keeps the sampled trajectory as close as possible to the original. 
 ![Tracker pose original and sampled comparison](./images/noisy_tracker_pose.png)
 ![Tracker pose original and sampled comparison](./images/sampled_tracker_pose.png)
 
@@ -294,7 +294,7 @@ We tackle the previous problems by sampling the dataset. We take advance of the 
 
 Althought we discard the 86% of the measurements, we can observe from Figure 3 that the sampled version is still very faithful to the original one, but more informative. 
 
-The selection of the measurements to skip is computed by compute_skip_indices(). Next, the actual sampling by skip_measurements().
+The selection of the measurements to skip is computed by compute_skip_indices(). The actual sampling by skip_measurements().
 
 ### Least squares
 
@@ -321,7 +321,7 @@ After 20 iterations, this is the final result
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation.png)
 
-Figure 4: Comparison of  sensor's tracked pose (red) against the calibrated sensor odometry (green).
+Figure 4: Comparison of  sampled sensor's tracked pose (red) against the calibrated sensor odometry (green).
 
 ![Robot odometry validation: comparison of our model vs. given robot pose](./images/calibrated_sensor_odometry_validation_chi.png)
 
@@ -344,10 +344,9 @@ From Figure 5 we can observe that the chi value starts from 3.4 and decreases un
 
 ### Animation 
 
-![Robot odometry validation: comparison of our model vs. given robot pose3](./images/live.gif)
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/live.gif)
 
-
-![Robot odometry validation: comparison of our model vs. given robot pose2](./images/param.gif)
+![Robot odometry validation: comparison of our model vs. given robot pose](./images/param.gif)
 
 Figure 6: Animation of the calibration (left) and parameters (right) evolution per iteration.
 
